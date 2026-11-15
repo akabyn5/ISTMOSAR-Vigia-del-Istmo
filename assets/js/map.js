@@ -107,23 +107,40 @@
       overlays["Provisional raster extent (not an AOI)"] = extentLayer;
       L.control.layers({ "OpenStreetMap": osm }, overlays, { collapsed: true, position: "topright" }).addTo(map);
 
-      // ---- legend ----
+      // ---- legend (compact; can be minimised) ----
       var legendScene;
       var legend = L.control({ position: "bottomleft" });
       legend.onAdd = function () {
         var div = L.DomUtil.create("div", "map-legend");
-        var title = L.DomUtil.create("strong", "", div);
-        title.textContent = "HHHH \u03B3\u2070 backscatter (dB)";
-        var ramp = L.DomUtil.create("div", "legend-ramp", div);
+        var head = L.DomUtil.create("div", "legend-head", div);
+        var title = L.DomUtil.create("strong", "", head);
+        title.textContent = "HHHH \u03B3\u2070 (dB)";
+        var toggle = L.DomUtil.create("button", "legend-toggle", head);
+        toggle.type = "button";
+        var body = L.DomUtil.create("div", "legend-body", div);
+        var ramp = L.DomUtil.create("div", "legend-ramp", body);
         ramp.setAttribute("aria-hidden", "true");
-        var scale = L.DomUtil.create("div", "legend-scale", div);
+        var scale = L.DomUtil.create("div", "legend-scale", body);
         var lo = L.DomUtil.create("span", "", scale);
         var hi = L.DomUtil.create("span", "", scale);
         lo.textContent = typeof display.sharedVminDb === "number" ? fmtDb(display.sharedVminDb) : "min";
         hi.textContent = typeof display.sharedVmaxDb === "number" ? fmtDb(display.sharedVmaxDb) : "max";
-        legendScene = L.DomUtil.create("div", "legend-scene", div);
-        var note = L.DomUtil.create("div", "legend-note", div);
-        note.textContent = "Shared 2\u201398th percentile stretch \u00B7 transparent = NoData / non-positive \u00B7 QA masks not applied \u00B7 exploratory";
+        legendScene = L.DomUtil.create("div", "legend-scene", body);
+        var more = L.DomUtil.create("details", "legend-more", body);
+        var sum = L.DomUtil.create("summary", "", more);
+        sum.textContent = "Notes";
+        var note = L.DomUtil.create("div", "legend-note", more);
+        note.textContent = "Shared 2\u201398% stretch \u00B7 transparent = NoData \u00B7 QA masks not applied \u00B7 exploratory";
+
+        function setCollapsed(c) {
+          div.classList.toggle("collapsed", c);
+          toggle.textContent = c ? "+" : "\u2212";
+          toggle.setAttribute("aria-expanded", String(!c));
+          toggle.setAttribute("aria-label", c ? "Show legend" : "Minimize legend");
+        }
+        setCollapsed(!!(window.matchMedia && window.matchMedia("(max-width: 700px)").matches));
+        toggle.addEventListener("click", function () { setCollapsed(!div.classList.contains("collapsed")); });
+
         L.DomEvent.disableClickPropagation(div);
         return div;
       };
@@ -153,7 +170,7 @@
           showBanner("Unknown scene: " + sceneId, "error");
           return;
         }
-        legendScene.textContent = "Showing: " + scene.label + " \u00B7 " + scene.orbitFidelity + " orbit";
+        legendScene.textContent = scene.label + " \u00B7 " + scene.orbitFidelity;
         if (!map.hasLayer(radarGroup)) map.addLayer(radarGroup);
         document.dispatchEvent(new CustomEvent("istmosar:scenechange", { detail: { scene: scene } }));
 
