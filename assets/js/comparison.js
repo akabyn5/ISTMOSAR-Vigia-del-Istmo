@@ -74,12 +74,15 @@
       ]);
       
       if (helpText) {
+        var helpId = (control.id || "compare-field") + "-help";
         wrapper.appendChild(
           el("small", {
             class: "compare-help",
+            id: helpId,
             text: helpText
           })
         );
+        control.setAttribute("aria-describedby", helpId);
       }
       
       return wrapper;
@@ -224,8 +227,47 @@
         setNotice([base].concat(extra));
       }
 
-      ui.earlierSel.addEventListener("change", update);
-      ui.laterSel.addEventListener("change", update);
+      // Chronological guard: disable impossible options and keep the pairing valid.
+      function refreshOptionStates() {
+        var earlier = byId[ui.earlierSel.value];
+        var latestDate = scenes.reduce(function (m, s) { return s.date > m ? s.date : m; }, scenes[0].date);
+        Array.prototype.forEach.call(ui.earlierSel.options, function (o) {
+          var sc = byId[o.value];
+          // The latest acquisition has no later scene, so it cannot be "Before".
+          o.disabled = sc.date >= latestDate;
+        });
+        Array.prototype.forEach.call(ui.laterSel.options, function (o) {
+          var sc = byId[o.value];
+          // Only scenes strictly later than the selected Before date.
+          o.disabled = !!earlier && sc.date <= earlier.date;
+        });
+      }
+
+      function ensureValidPairing() {
+        var a = byId[ui.earlierSel.value];
+        var b = byId[ui.laterSel.value];
+        if (a && b && b.date > a.date) { refreshOptionStates(); return; }
+        // Pick the nearest later scene after the selected Before date.
+        var next = null;
+        scenes.forEach(function (s) {
+          if (a && s.date > a.date && (!next || s.date < next.date)) next = s;
+        });
+        if (next) {
+          ui.laterSel.value = next.id;
+        } else if (a) {
+          // Before has no later scene (should be unreachable: option is disabled). Fall back to the
+          // earliest scene as Before and the nearest later scene as After.
+          var sorted = scenes.slice().sort(function (x, y) { return x.date < y.date ? -1 : 1; });
+          ui.earlierSel.value = sorted[0].id;
+          ui.laterSel.value = sorted[1] ? sorted[1].id : sorted[0].id;
+        }
+        refreshOptionStates();
+      }
+
+      ensureValidPairing();
+
+      ui.earlierSel.addEventListener("change", function () { ensureValidPairing(); update(); });
+      ui.laterSel.addEventListener("change", function () { ensureValidPairing(); update(); });
       [ui.fade, ui.opacity].forEach(function (i) { i.addEventListener("input", applyOpacity); });
       [ui.showEarlier, ui.showLater].forEach(function (i) { i.addEventListener("change", applyOpacity); });
 
