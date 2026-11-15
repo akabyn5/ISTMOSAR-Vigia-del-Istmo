@@ -1,8 +1,43 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "Chagres–Gatún study area candidate",
+  "region": "Chagres / Gatún region, Panama (main geographic priority)",
   "status": "provisional",
   "geometryApproved": false,
   "geometry": null,
-  "note": "No authoritative study-area polygon is published in this initial website release. The map is a general Panama basemap only; it must not be interpreted as verified NISAR coverage or an approved area of interest."
+  "mapView": {
+    "center": [
+      8.95,
+      -79.55
+    ],
+    "zoom": 8,
+    "provenance": "Viewport setting only (unchanged from the initial release). It is not a boundary."
+  },
+  "provisionalViewingExtent": {
+    "label": "Provisional raster viewing extent (not an AOI)",
+    "west": -80.86589462119588,
+    "south": 7.362124624304821,
+    "east": -77.78193327680438,
+    "north": 10.362722948649076,
+    "leafletBounds": [
+      [
+        7.362124624304821,
+        -80.86589462119588
+      ],
+      [
+        10.362722948649076,
+        -77.78193327680438
+      ]
+    ],
+    "meaning": "Envelope of the shared NISAR GCOV raster grid transformed to WGS84. It is NOT an acquisition footprint, NOT the screening rectangle and NOT a Chagres–Gatún watershed boundary.",
+    "provenance": "preview_metadata.json commonPreviewGrid.overlayBoundsWGS84, generated 2026-11-15T05:42:28.832534+00:00; identical to the provisional envelope reported by José."
+  },
+  "boundaryProvenance": "None. No approved boundary vector has been delivered. No watershed polygon is drawn or invented.",
+  "approvalStatus": {
+    "aoi": "not approved",
+    "officialFootprint": "not verified",
+    "approvedBy": null,
+    "approvalDate": null
+  },
+  "note": "Do not present any rectangle on the map as a hydrological or administrative boundary."
 }

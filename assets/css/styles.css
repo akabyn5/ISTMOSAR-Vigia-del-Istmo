@@ -3,3 +3,31 @@
 @media(max-width:900px){.primary-nav{gap:13px}.nav-link{font-size:9px}.hero{gap:20px}.status-panel>div{padding:10px}.panel-label{font-size:7px}.status-panel strong{font-size:9px}.science-item{padding:17px 13px}}
 @media(max-width:700px){html{scroll-padding-top:72px}.site-header{min-height:68px}.menu-toggle{display:block}.primary-nav{display:none;position:absolute;top:67px;left:0;right:0;background:#091827;border-bottom:1px solid var(--line);padding:9px 22px 17px;flex-direction:column;align-items:stretch;gap:0}.primary-nav.open{display:flex}.nav-link{padding:12px 0;border-bottom:1px solid var(--line);font-size:11px}.nav-link:last-child{border:0}.section-shell{width:min(100% - 34px,1240px)}.hero{grid-template-columns:1fr;padding-top:58px;padding-bottom:45px;gap:20px}.hero-aside{display:none}h1{font-size:54px}.hero-lede{font-size:14px}.hero-actions{gap:16px;flex-wrap:wrap}.intro-strip{grid-template-columns:1fr 1fr;gap:15px}.intro-strip>div:first-child{grid-column:1/-1}.strip-stat{padding-left:12px}.strip-stat strong{font-size:29px}.content-section{padding-top:67px}.section-heading{display:block}.section-description{margin-top:13px}.explorer-layout{grid-template-columns:1fr}.map-frame{border-right:0;border-bottom:1px solid var(--line)}#map{height:340px}.scene-panel{padding:21px}.change-grid{grid-template-columns:1fr}.change-card{min-height:0}.science-grid{grid-template-columns:1fr 1fr}.science-item:nth-child(2){border-right:0}.science-item:nth-child(-n+2){border-bottom:1px solid var(--line)}.science-item{min-height:195px}.formula-band{display:block}.formula{margin-top:20px}.about-grid{grid-template-columns:1fr;gap:25px}.footer-inner{display:block}.footer-disclaimer{text-align:left;margin-top:12px!important}}
 @media(max-width:390px){.brand-copy small{font-size:7px}.hero-actions{align-items:flex-start;flex-direction:column}.science-grid{grid-template-columns:1fr}.science-item{border-right:0;border-bottom:1px solid var(--line);min-height:auto}.science-item:last-child{border-bottom:0}.science-item h3{margin-top:14px}}
+
+/* ===== ISTMOSAR geographic visualization (Maryfer, MH-05/MH-06) ===== */
+#map,#compare-map{isolation:isolate}
+.map-banner{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:1000;max-width:88%;padding:8px 12px;font:10px/1.5 var(--mono);color:var(--text);background:rgba(7,19,33,.94);border:1px solid var(--amber);pointer-events:none;text-align:center}
+.map-banner[hidden]{display:none}
+.map-banner-error{border-color:#e07a7a}
+.map-legend{max-width:250px;padding:9px 11px;font:9px/1.45 var(--mono);color:var(--text);background:rgba(7,19,33,.9);border:1px solid var(--line)}
+.map-legend strong{display:block;font-size:10px;margin-bottom:6px}
+.legend-ramp{height:10px;background:linear-gradient(to right,#000,#fff);border:1px solid rgba(255,255,255,.35)}
+.legend-scale{display:flex;justify-content:space-between;margin-top:3px}
+.legend-scene{margin-top:6px;color:var(--cyan)}
+.legend-note{margin-top:5px;color:#9db0bf;font-size:8px}
+.compare-panel{margin-top:16px;border:1px solid var(--line);background:var(--panel);padding:22px 24px}
+.compare-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.compare-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 18px;align-items:end;margin-bottom:16px}
+.compare-field{display:block;min-width:0}
+.compare-field input[type=range]{width:100%;accent-color:var(--cyan)}
+.compare-checks{grid-column:1/-1;display:flex;gap:22px;flex-wrap:wrap}
+.compare-check{display:flex;align-items:center;gap:8px;font-size:11px;color:#c5d1d9}
+.compare-check input{accent-color:var(--cyan)}
+.compare-map-wrap{position:relative;border:1px solid var(--line)}
+#compare-map{height:420px;width:100%;background:#0b1b2b}
+.compare-labels{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;font:9px var(--mono);color:#91a6b6;border-top:1px solid var(--line);flex-wrap:wrap}
+.compare-label{letter-spacing:.04em}
+.compare-interval{display:block;margin-top:10px;font:10px var(--mono);color:var(--muted)}
+.compare-panel .notice{margin-bottom:0}
+@media(max-width:900px){.compare-controls{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.compare-panel{padding:16px}.compare-controls{grid-template-columns:1fr}#compare-map{height:340px}.map-legend{max-width:170px;font-size:8px}.legend-note{display:none}}

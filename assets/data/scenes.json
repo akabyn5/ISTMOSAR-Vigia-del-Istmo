@@ -1,6 +1,66 @@
 {
-  "schemaVersion": 1,
-  "status": "metadata-catalogue-only",
+  "schemaVersion": 2,
+  "status": "exploratory-previews-pending-scientific-approval",
+  "lastUpdated": "2026-11-15",
+  "maintainer": "Maryfer Higuera (Scientific Data Lead)",
+  "scopeNote": "Single-acquisition HHHH backscatter previews only. No change detection, difference map, change statistics or environmental conclusion has been calculated or approved.",
+  "stateDefinitions": {
+    "metadataVerified": "HDF5 attributes inspected (grid, CRS, datasets, units). Does not include the raw CMR UMM-G record.",
+    "rasterExported": "A GeoTIFF export of Frequency A HHHH exists.",
+    "rasterPreviewGenerated": "A display PNG was generated (reported in preview_metadata.json).",
+    "rasterPreviewVisuallyVerified": "The PNG was opened and checked for placement/appearance by a person.",
+    "approvedForComparison": "Scientifically approved for date-pair comparison by José after Stage 4 review."
+  },
+  "commonGrid": {
+    "sourceGrid": "/science/LSAR/GCOV/grids/frequencyA",
+    "crs": "EPSG:32617",
+    "crsName": "WGS 84 / UTM zone 17N",
+    "widthPx": 33768,
+    "heightPx": 33048,
+    "dtype": "float32",
+    "pixelSizeMeters": [
+      10.0,
+      10.0
+    ],
+    "affineTransform": [
+      10.0,
+      0.0,
+      514800.0,
+      0.0,
+      -10.0,
+      1145520.0
+    ],
+    "projectedBoundsMeters": {
+      "left": 514800.0,
+      "bottom": 815040.0,
+      "right": 852480.0,
+      "top": 1145520.0
+    },
+    "note": "Raster-grid extent shared by all three scenes. Not an acquisition footprint and not an approved study area."
+  },
+  "display": {
+    "measurement": "Frequency A HHHH",
+    "inputMeasurement": "gamma-zero linear power",
+    "inputUnits": "1 (dimensionless)",
+    "conversion": "10 * log10(power)",
+    "displayUnits": "dB",
+    "colorMap": "grayscale",
+    "resampling": "average",
+    "alphaPolicy": "transparent for NoData, non-finite, and non-positive values",
+    "stretchPercentiles": [
+      2.0,
+      98.0
+    ],
+    "sharedVminDb": -25.93835090637207,
+    "sharedVmaxDb": -4.439489307403564,
+    "stretchPopulation": "all finite positive cells in the three downsampled preview grids",
+    "qaMaskApplied": false,
+    "previewCrs": "EPSG:3857",
+    "previewWidthPx": 1800,
+    "previewHeightPx": 1773,
+    "label": "Exploratory display product. Not a substitute for the original measurements and not QA-approved.",
+    "provenanceSource": "preview_metadata.json (generated 2026-11-15T05:42:28.832534+00:00)"
+  },
   "scenes": [
     {
       "id": "nisar-20260616",
@@ -13,12 +73,103 @@
       "processingType": "Production",
       "orbitFidelity": "Forecast",
       "frequency": "A",
-      "polarizations": ["HHHH", "HVHV"],
+      "polarizations": [
+        "HHHH",
+        "HVHV"
+      ],
       "cmrGranuleId": "G4250187623-ASF",
       "filename": "NISAR_L2_PR_GCOV_023_040_D_084_4005_DHDH_A_20260616T234448_20260616T234520_P05023_F_F_J_001.h5",
-      "preview": null,
+      "key": "june16",
+      "label": "June 16, 2026",
+      "granuleId": "NISAR_L2_PR_GCOV_023_040_D_084_4005_DHDH_A_20260616T234448_20260616T234520_P05023_F_F_J_001",
+      "acquisition": {
+        "date": "2026-06-16",
+        "startUtc": "2026-06-16T23:44:48Z",
+        "endUtc": "2026-06-16T23:45:20Z"
+      },
+      "cmr": {
+        "granuleConceptId": "G4250187623-ASF",
+        "granuleConceptIdStatus": "Previously associated concept ID; NOT confirmed against the raw UMM-G record.",
+        "ummG": "PENDING RAW JSON VERIFICATION",
+        "collectionConceptId": null,
+        "collectionShortName": null,
+        "collectionStatus": "PENDING"
+      },
+      "productDetails": {
+        "level": "L2",
+        "type": "GCOV",
+        "filenameProductToken": "PR",
+        "producerReleaseToken": "P05023",
+        "acquisitionMode": "4005",
+        "polarizationCode": "DHDH",
+        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
+      },
+      "orbitFidelityNote": "Forecast (filename token F)",
+      "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
+      "measurement": {
+        "primary": "Frequency A HHHH",
+        "alsoPresent": "Frequency A HVHV",
+        "notPresent": [
+          "VVVV",
+          "VHVH"
+        ]
+      },
+      "hdf5Statistics": {
+        "min": 4.835409228576282e-08,
+        "max": 10412.283203125,
+        "mean": 0.12073519080877304,
+        "sampleStddev": 1.42911696434021,
+        "note": "Values of HHHH min/max/mean/stddev as stored in HDF5 attributes (linear, unitless)."
+      },
+      "source": {
+        "hdf5Bytes": 4877975552,
+        "geotiffRelativePath": "sar_demo_outputs/stage_2_geotiff_exports/NISAR_L2_PR_GCOV_023_040_D_084_4005_DHDH_A_20260616T234448_20260616T234520_P05023_F_F_J_001/frequencyA_HHHH.tif",
+        "geotiffBytes": 1435890418
+      },
+      "catalogReference": {
+        "catalog": "NASA CMR / ASF DAAC",
+        "url": null,
+        "status": "PENDING raw UMM-G / ASF URL"
+      },
+      "preview": {
+        "path": "assets/maps/june16_preview.png",
+        "widthPx": 1800,
+        "heightPx": 1773,
+        "bytes": 1598989,
+        "crs": "EPSG:3857",
+        "validPixels": 1594131,
+        "transparentPixels": 1597269,
+        "overlayBoundsWgs84": {
+          "west": -80.86589462119588,
+          "south": 7.362124624304821,
+          "east": -77.78193327680438,
+          "north": 10.362722948649076
+        },
+        "leafletBounds": [
+          [
+            7.362124624304821,
+            -80.86589462119588
+          ],
+          [
+            10.362722948649076,
+            -77.78193327680438
+          ]
+        ],
+        "boundsMeaning": "Envelope of the projected raster grid. NOT an official CMR footprint and NOT an approved AOI.",
+        "status": "generated-per-preview_metadata; file presence and visual check required before release",
+        "qaMaskApplied": false
+      },
+      "verification": {
+        "metadataVerified": true,
+        "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
+        "rasterExported": true,
+        "rasterPreviewGenerated": true,
+        "rasterPreviewVisuallyVerified": false,
+        "approvedForComparison": false
+      },
       "footprintApprovedForStudyArea": false,
-      "scientificApproval": "pending"
+      "scientificApproval": "pending",
+      "scientificStatus": "Exploratory single-date HHHH backscatter preview; not a change-detection result and not proof of an environmental cause."
     },
     {
       "id": "nisar-20260628",
@@ -31,12 +182,103 @@
       "processingType": "Production",
       "orbitFidelity": "Near Real-Time",
       "frequency": "A",
-      "polarizations": ["HHHH", "HVHV"],
+      "polarizations": [
+        "HHHH",
+        "HVHV"
+      ],
       "cmrGranuleId": "G4240958164-ASF",
       "filename": "NISAR_L2_PR_GCOV_024_040_D_084_4005_DHDH_A_20260628T234446_20260628T234520_P05023_N_F_J_001.h5",
-      "preview": null,
+      "key": "june28",
+      "label": "June 28, 2026",
+      "granuleId": "NISAR_L2_PR_GCOV_024_040_D_084_4005_DHDH_A_20260628T234446_20260628T234520_P05023_N_F_J_001",
+      "acquisition": {
+        "date": "2026-06-28",
+        "startUtc": "2026-06-28T23:44:46Z",
+        "endUtc": "2026-06-28T23:45:20Z"
+      },
+      "cmr": {
+        "granuleConceptId": "G4240958164-ASF",
+        "granuleConceptIdStatus": "Previously associated concept ID; NOT confirmed against the raw UMM-G record.",
+        "ummG": "PENDING RAW JSON VERIFICATION",
+        "collectionConceptId": null,
+        "collectionShortName": null,
+        "collectionStatus": "PENDING"
+      },
+      "productDetails": {
+        "level": "L2",
+        "type": "GCOV",
+        "filenameProductToken": "PR",
+        "producerReleaseToken": "P05023",
+        "acquisitionMode": "4005",
+        "polarizationCode": "DHDH",
+        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
+      },
+      "orbitFidelityNote": "Near Real-Time (filename token N)",
+      "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
+      "measurement": {
+        "primary": "Frequency A HHHH",
+        "alsoPresent": "Frequency A HVHV",
+        "notPresent": [
+          "VVVV",
+          "VHVH"
+        ]
+      },
+      "hdf5Statistics": {
+        "min": 4.169242231455428e-07,
+        "max": 16135.6904296875,
+        "mean": 0.10409828275442123,
+        "sampleStddev": 1.4710747003555298,
+        "note": "Values of HHHH min/max/mean/stddev as stored in HDF5 attributes (linear, unitless)."
+      },
+      "source": {
+        "hdf5Bytes": 5100273664,
+        "geotiffRelativePath": "sar_demo_outputs/stage_2_geotiff_exports/NISAR_L2_PR_GCOV_024_040_D_084_4005_DHDH_A_20260628T234446_20260628T234520_P05023_N_F_J_001/frequencyA_HHHH.tif",
+        "geotiffBytes": 1522909183
+      },
+      "catalogReference": {
+        "catalog": "NASA CMR / ASF DAAC",
+        "url": null,
+        "status": "PENDING raw UMM-G / ASF URL"
+      },
+      "preview": {
+        "path": "assets/maps/june28_preview.png",
+        "widthPx": 1800,
+        "heightPx": 1773,
+        "bytes": 1758399,
+        "crs": "EPSG:3857",
+        "validPixels": 1691432,
+        "transparentPixels": 1499968,
+        "overlayBoundsWgs84": {
+          "west": -80.86589462119588,
+          "south": 7.362124624304821,
+          "east": -77.78193327680438,
+          "north": 10.362722948649076
+        },
+        "leafletBounds": [
+          [
+            7.362124624304821,
+            -80.86589462119588
+          ],
+          [
+            10.362722948649076,
+            -77.78193327680438
+          ]
+        ],
+        "boundsMeaning": "Envelope of the projected raster grid. NOT an official CMR footprint and NOT an approved AOI.",
+        "status": "generated-per-preview_metadata; file presence and visual check required before release",
+        "qaMaskApplied": false
+      },
+      "verification": {
+        "metadataVerified": true,
+        "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
+        "rasterExported": true,
+        "rasterPreviewGenerated": true,
+        "rasterPreviewVisuallyVerified": false,
+        "approvedForComparison": false
+      },
       "footprintApprovedForStudyArea": false,
-      "scientificApproval": "pending"
+      "scientificApproval": "pending",
+      "scientificStatus": "Exploratory single-date HHHH backscatter preview; not a change-detection result and not proof of an environmental cause."
     },
     {
       "id": "nisar-20261014",
@@ -49,12 +291,139 @@
       "processingType": "Production",
       "orbitFidelity": "Near Real-Time",
       "frequency": "A",
-      "polarizations": ["HHHH", "HVHV"],
+      "polarizations": [
+        "HHHH",
+        "HVHV"
+      ],
       "cmrGranuleId": "G4371433684-ASF",
       "filename": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001.h5",
-      "preview": null,
+      "key": "october14",
+      "label": "October 14, 2026",
+      "granuleId": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001",
+      "acquisition": {
+        "date": "2026-10-14",
+        "startUtc": "2026-10-14T23:44:44Z",
+        "endUtc": "2026-10-14T23:45:17Z"
+      },
+      "cmr": {
+        "granuleConceptId": "G4371433684-ASF",
+        "granuleConceptIdStatus": "Previously associated concept ID; NOT confirmed against the raw UMM-G record.",
+        "ummG": "PENDING RAW JSON VERIFICATION",
+        "collectionConceptId": "C2854338529-ASF",
+        "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+        "collectionStatus": "From an earlier extracted CMR summary (reported by José); raw record not yet inspected."
+      },
+      "productDetails": {
+        "level": "L2",
+        "type": "GCOV",
+        "filenameProductToken": "PR",
+        "producerReleaseToken": "P05023",
+        "acquisitionMode": "4005",
+        "polarizationCode": "DHDH",
+        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
+      },
+      "orbitFidelityNote": "Near Real-Time (filename token N)",
+      "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
+      "measurement": {
+        "primary": "Frequency A HHHH",
+        "alsoPresent": "Frequency A HVHV",
+        "notPresent": [
+          "VVVV",
+          "VHVH"
+        ]
+      },
+      "hdf5Statistics": {
+        "min": 9.635086826165207e-07,
+        "max": 13324.54296875,
+        "mean": 0.1191515251994133,
+        "sampleStddev": 1.5108366012573242,
+        "note": "Values of HHHH min/max/mean/stddev as stored in HDF5 attributes (linear, unitless)."
+      },
+      "source": {
+        "hdf5Bytes": 4991221760,
+        "geotiffRelativePath": "sar_demo_outputs/stage_2_geotiff_exports/NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001/frequencyA_HHHH.tif",
+        "geotiffBytes": 1482718316
+      },
+      "catalogReference": {
+        "catalog": "NASA CMR / ASF DAAC",
+        "url": null,
+        "status": "PENDING raw UMM-G / ASF URL"
+      },
+      "preview": {
+        "path": "assets/maps/october14_preview.png",
+        "widthPx": 1800,
+        "heightPx": 1773,
+        "bytes": 1784029,
+        "crs": "EPSG:3857",
+        "validPixels": 1643234,
+        "transparentPixels": 1548166,
+        "overlayBoundsWgs84": {
+          "west": -80.86589462119588,
+          "south": 7.362124624304821,
+          "east": -77.78193327680438,
+          "north": 10.362722948649076
+        },
+        "leafletBounds": [
+          [
+            7.362124624304821,
+            -80.86589462119588
+          ],
+          [
+            10.362722948649076,
+            -77.78193327680438
+          ]
+        ],
+        "boundsMeaning": "Envelope of the projected raster grid. NOT an official CMR footprint and NOT an approved AOI.",
+        "status": "generated-per-preview_metadata; file presence and visual check required before release",
+        "qaMaskApplied": false
+      },
+      "verification": {
+        "metadataVerified": true,
+        "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
+        "rasterExported": true,
+        "rasterPreviewGenerated": true,
+        "rasterPreviewVisuallyVerified": false,
+        "approvedForComparison": false
+      },
       "footprintApprovedForStudyArea": false,
-      "scientificApproval": "pending"
+      "scientificApproval": "pending",
+      "scientificStatus": "Exploratory single-date HHHH backscatter preview; not a change-detection result and not proof of an environmental cause."
     }
-  ]
+  ],
+  "pairs": [
+    {
+      "id": "june16-june28",
+      "earlier": "nisar-20260616",
+      "later": "nisar-20260628",
+      "intervalDays": 12,
+      "priority": 1,
+      "status": "PENDING",
+      "caveats": [
+        "Earlier scene is Forecast orbit fidelity; later scene is Near Real-Time."
+      ]
+    },
+    {
+      "id": "june28-october14",
+      "earlier": "nisar-20260628",
+      "later": "nisar-20261014",
+      "intervalDays": 108,
+      "priority": 2,
+      "status": "PENDING",
+      "caveats": [
+        "Both scenes are Near Real-Time fidelity."
+      ]
+    },
+    {
+      "id": "june16-october14",
+      "earlier": "nisar-20260616",
+      "later": "nisar-20261014",
+      "intervalDays": 120,
+      "priority": 3,
+      "status": "PENDING",
+      "caveats": [
+        "Earlier scene is Forecast orbit fidelity; later scene is Near Real-Time."
+      ]
+    }
+  ],
+  "pairsNote": "All pairs are PENDING. Identical grid dimensions or alignment are not scientific approval. The Stage 4 review (AOI, footprint, masks, QA reports) has not been completed in this repository. José makes the final decision."
 }
