@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "status": "metadata-catalogue-only",
+  "scenes": [
+    {
+      "id": "nisar-20260616",
+      "date": "2026-06-16",
+      "cycle": "023",
+      "relativeTrack": "040",
+      "frame": "084",
+      "orbitDirection": "Descending",
+      "product": "L2 GCOV",
+      "processingType": "Production",
+      "orbitFidelity": "Forecast",
+      "frequency": "A",
+      "polarizations": ["HHHH", "HVHV"],
+      "cmrGranuleId": "G4250187623-ASF",
+      "filename": "NISAR_L2_PR_GCOV_023_040_D_084_4005_DHDH_A_20260616T234448_20260616T234520_P05023_F_F_J_001.h5",
+      "preview": null,
+      "footprintApprovedForStudyArea": false,
+      "scientificApproval": "pending"
+    },
+    {
+      "id": "nisar-20260628",
+      "date": "2026-06-28",
+      "cycle": "024",
+      "relativeTrack": "040",
+      "frame": "084",
+      "orbitDirection": "Descending",
+      "product": "L2 GCOV",
+      "processingType": "Production",
+      "orbitFidelity": "Near Real-Time",
+      "frequency": "A",
+      "polarizations": ["HHHH", "HVHV"],
+      "cmrGranuleId": "G4240958164-ASF",
+      "filename": "NISAR_L2_PR_GCOV_024_040_D_084_4005_DHDH_A_20260628T234446_20260628T234520_P05023_N_F_J_001.h5",
+      "preview": null,
+      "footprintApprovedForStudyArea": false,
+      "scientificApproval": "pending"
+    },
+    {
+      "id": "nisar-20261014",
+      "date": "2026-10-14",
+      "cycle": "033",
+      "relativeTrack": "040",
+      "frame": "084",
+      "orbitDirection": "Descending",
+      "product": "L2 GCOV",
+      "processingType": "Production",
+      "orbitFidelity": "Near Real-Time",
+      "frequency": "A",
+      "polarizations": ["HHHH", "HVHV"],
+      "cmrGranuleId": "G4371433684-ASF",
+      "filename": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001.h5",
+      "preview": null,
+      "footprintApprovedForStudyArea": false,
+      "scientificApproval": "pending"
+    }
+  ]
+}

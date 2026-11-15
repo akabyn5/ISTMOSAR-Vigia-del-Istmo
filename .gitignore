@@ -1,0 +1,40 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+.netrc
+*.pem
+*.key
+
+# NISAR source products and large scientific intermediates
+*.h5
+*.hdf5
+*.tif
+*.tiff
+*.vrt
+*.nc
+*.grd
+*.aux.xml
+*.ovr
+
+# Local outputs, notebooks, temporary files
+local_data/
+private_data/
+intermediate/
+tmp/
+*.log
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
