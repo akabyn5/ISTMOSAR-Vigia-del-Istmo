@@ -13,16 +13,18 @@ Three single-date Frequency A HHHH backscatter previews (June 16, June 28 and Oc
 - **Vegetation structure.** L-band interacts with canopy and trunks; the response depends on biomass, density, leaf state and structure. Growth, loss or phenology can change backscatter.
 - **Radar scattering mechanisms.** Surface, volume and double-bounce scattering mix in each pixel. HHHH responds to these differently than HVHV, and the same value can come from different mechanisms.
 - **Acquisition geometry.** The three scenes share relative track 040, descending direction and frame 084, which helps, but incidence angle varies across the swath and terrain can still affect the result. Geometry compatibility has not been independently audited for these previews.
-- **Orbit fidelity.** The June 16 scene uses **Forecast** orbit/attitude fidelity; June 28 and October 14 use **Near Real-Time**. Differences in orbit quality can affect geolocation and radiometry. Pairs that include June 16 need extra scrutiny.
+- **Orbit and pointing fidelity.** The June 16 scene has orbit and pointing fidelity **Forecast** (filename token `F`); June 28 and October 14 have **Near Real-Time** (token `N`). Differences in orbit quality can affect geolocation and radiometry. Pairs that include June 16 need extra scrutiny.
 - **Quality masks.** The GCOV `mask` and `inputDataExceptionMask` were **not applied**; QA report/statistics/summary availability and validity have not been reviewed here. Previews may include invalid or low-quality pixels.
-- **Valid-pixel limitations.** Only NaN, non-finite and non-positive values are transparent. About half of each preview is transparent because of the shape of the imaged swath inside the rectangular grid. No common-valid mask exists between dates.
+- **Valid-pixel limitations.** After resampling, only NaN, non-finite and non-positive values are transparent; this is not a mask of every non-positive source pixel, and the influence of such source values on averaged pixels has not yet been investigated. About half of each preview is transparent because of the shape of the imaged swath inside the rectangular grid. No common-valid mask exists between dates.
 - **Radar change is not flooding.** A difference in backscatter, even a large one, is not evidence of flooding, water-level change or deforestation without independent supporting evidence. Any such inference must be labelled as a hypothesis.
 
 ## Product and metadata maturity
 
-- The only CMR collection reference seen (for October 14) is named `NISAR_L2_GCOV_PROVISIONAL_V1`. The data maturity and validation level must be confirmed from official product documentation before the results are interpreted quantitatively.
+- `P05023` is the CRID (Composite Release ID). ASF documents it as the CRID of its PROVISIONAL products, which are calibrated and partially validated and may be superseded by validated reprocessing. Quality may not be optimal.
+- The October 14 record is associated with `NISAR_L2_GCOV_PROVISIONAL_V1`; that association awaits official CMR verification. The June 16 acquisition predates the stated 2026-06-17 start of the PROVISIONAL collection, and the collection of the June scenes is not confirmed. No scene is described as scientifically validated.
 - Full CMR UMM-G records for all three granules are **pending raw JSON verification**. The CMR concept IDs are "previously associated" identifiers.
-- Acquisition mode `4005`, track, direction and fidelity were read from the granule filenames and the project handoff, not from HDF5 attributes.
+- Acquisition mode `4005`, track, direction and the fidelity tokens were read from the granule filenames and project records, not from HDF5 attributes.
+- Pixel equivalence between the Stage 2 GeoTIFFs used for the previews and the separately georeferenced October 14 export has not been demonstrated.
 
 ## Display limitations
 
@@ -37,5 +39,5 @@ Three single-date Frequency A HHHH backscatter previews (June 16, June 28 and Oc
 
 ## Technical
 
-- The site needs external services (Leaflet, OpenStreetMap tiles, Google Fonts). The basemap may not load offline.
+- The site needs external services (Leaflet, OpenStreetMap tiles, Google Fonts). The basemap may not load offline. The three PNG previews (about 5 MB in total) are loaded from the site itself.
 - The map works only over HTTP(S); open it with a local server, not by double-clicking `index.html`.

@@ -1,8 +1,8 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "status": "exploratory-previews-pending-scientific-approval",
   "lastUpdated": "2026-11-15",
-  "maintainer": "Maryfer Higuera (Scientific Data Lead)",
+  "maintainer": "Maryfer Higuera",
   "scopeNote": "Single-acquisition HHHH backscatter previews only. No change detection, difference map, change statistics or environmental conclusion has been calculated or approved.",
   "stateDefinitions": {
     "metadataVerified": "HDF5 attributes inspected (grid, CRS, datasets, units). Does not include the raw CMR UMM-G record.",
@@ -46,7 +46,7 @@
     "displayUnits": "dB",
     "colorMap": "grayscale",
     "resampling": "average",
-    "alphaPolicy": "transparent for NoData, non-finite, and non-positive values",
+    "alphaPolicy": "transparent where the resampled (destination) value is NoData, non-finite or non-positive; applied after resampling",
     "stretchPercentiles": [
       2.0,
       98.0
@@ -59,7 +59,15 @@
     "previewWidthPx": 1800,
     "previewHeightPx": 1773,
     "label": "Exploratory display product. Not a substitute for the original measurements and not QA-approved.",
-    "provenanceSource": "preview_metadata.json (generated 2026-11-15T05:42:28.832534+00:00)"
+    "provenanceSource": "preview_metadata.json (generated 2026-11-15T05:42:28.832534+00:00)",
+    "processingOrder": [
+      "Read the Stage 2 Frequency A HHHH GeoTIFF (gamma-zero linear power).",
+      "Reproject to EPSG:3857 and average-resample the LINEAR power values to 1800 x 1773 px.",
+      "Convert positive resampled values to dB: 10 * log10(power).",
+      "Apply the shared 2nd-98th percentile display stretch.",
+      "Export a transparent grayscale PNG (QA masks not applied)."
+    ],
+    "processingOrderVerification": "Average resampling of linear power before the dB conversion was confirmed by inspection of the preview-generation script (reported by the project owner). Whether non-positive source values influenced neighbouring averaged pixels has not yet been investigated."
   },
   "scenes": [
     {
@@ -93,18 +101,24 @@
         "ummG": "PENDING RAW JSON VERIFICATION",
         "collectionConceptId": null,
         "collectionShortName": null,
-        "collectionStatus": "PENDING"
+        "collectionStatus": "PENDING",
+        "collectionNote": "Collection maturity is not assigned. This acquisition (2026-06-16) predates the stated 2026-06-17 start of the PROVISIONAL collection, so its collection must be confirmed from its official granule/CMR record."
       },
       "productDetails": {
         "level": "L2",
         "type": "GCOV",
         "filenameProductToken": "PR",
-        "producerReleaseToken": "P05023",
+        "crid": "P05023",
+        "cridMeaning": "Composite Release ID (CRID) from the granule filename",
         "acquisitionMode": "4005",
         "polarizationCode": "DHDH",
-        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
+        "orbitPointingFidelityToken": "F",
+        "frameCoverageToken": "F",
+        "processingSiteToken": "J",
+        "tokenSource": "Filename tokens after the CRID follow the ASF NISAR naming convention: orbit and pointing fidelity (F = Forecast, N = Near Real-Time), frame coverage (F = Full), processing site (J = JPL). Confirm against the JPL product specification D-102274.",
+        "note": "Acquisition mode, track, direction and the filename tokens come from the granule filename and project records, not from HDF5 attributes."
       },
-      "orbitFidelityNote": "Forecast (filename token F)",
+      "orbitFidelityNote": "Orbit and pointing fidelity: Forecast (filename token F)",
       "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
       "measurement": {
         "primary": "Frequency A HHHH",
@@ -202,18 +216,24 @@
         "ummG": "PENDING RAW JSON VERIFICATION",
         "collectionConceptId": null,
         "collectionShortName": null,
-        "collectionStatus": "PENDING"
+        "collectionStatus": "PENDING",
+        "collectionNote": "CRID P05023 is the Composite Release ID that ASF documents for PROVISIONAL products, but this scene's collection is not confirmed until its CMR record is checked."
       },
       "productDetails": {
         "level": "L2",
         "type": "GCOV",
         "filenameProductToken": "PR",
-        "producerReleaseToken": "P05023",
+        "crid": "P05023",
+        "cridMeaning": "Composite Release ID (CRID) from the granule filename",
         "acquisitionMode": "4005",
         "polarizationCode": "DHDH",
-        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
+        "orbitPointingFidelityToken": "N",
+        "frameCoverageToken": "F",
+        "processingSiteToken": "J",
+        "tokenSource": "Filename tokens after the CRID follow the ASF NISAR naming convention: orbit and pointing fidelity (F = Forecast, N = Near Real-Time), frame coverage (F = Full), processing site (J = JPL). Confirm against the JPL product specification D-102274.",
+        "note": "Acquisition mode, track, direction and the filename tokens come from the granule filename and project records, not from HDF5 attributes."
       },
-      "orbitFidelityNote": "Near Real-Time (filename token N)",
+      "orbitFidelityNote": "Orbit and pointing fidelity: Near Real-Time (filename token N)",
       "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
       "measurement": {
         "primary": "Frequency A HHHH",
@@ -311,18 +331,24 @@
         "ummG": "PENDING RAW JSON VERIFICATION",
         "collectionConceptId": "C2854338529-ASF",
         "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
-        "collectionStatus": "From an earlier extracted CMR summary (reported by José); raw record not yet inspected."
+        "collectionStatus": "Collection association awaiting official CMR verification (raw UMM-G record not yet inspected).",
+        "collectionNote": "Associated with NISAR_L2_GCOV_PROVISIONAL_V1; this association is awaiting official CMR verification. PROVISIONAL products are calibrated and partially validated, and quality may not be optimal."
       },
       "productDetails": {
         "level": "L2",
         "type": "GCOV",
         "filenameProductToken": "PR",
-        "producerReleaseToken": "P05023",
+        "crid": "P05023",
+        "cridMeaning": "Composite Release ID (CRID) from the granule filename",
         "acquisitionMode": "4005",
         "polarizationCode": "DHDH",
-        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
+        "orbitPointingFidelityToken": "N",
+        "frameCoverageToken": "F",
+        "processingSiteToken": "J",
+        "tokenSource": "Filename tokens after the CRID follow the ASF NISAR naming convention: orbit and pointing fidelity (F = Forecast, N = Near Real-Time), frame coverage (F = Full), processing site (J = JPL). Confirm against the JPL product specification D-102274.",
+        "note": "Acquisition mode, track, direction and the filename tokens come from the granule filename and project records, not from HDF5 attributes."
       },
-      "orbitFidelityNote": "Near Real-Time (filename token N)",
+      "orbitFidelityNote": "Orbit and pointing fidelity: Near Real-Time (filename token N)",
       "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
       "measurement": {
         "primary": "Frequency A HHHH",
@@ -399,7 +425,7 @@
       "priority": 1,
       "status": "PENDING",
       "caveats": [
-        "Earlier scene is Forecast orbit fidelity; later scene is Near Real-Time."
+        "Orbit and pointing fidelity differs: the earlier scene is Forecast, the later scene is Near Real-Time."
       ]
     },
     {
@@ -410,7 +436,7 @@
       "priority": 2,
       "status": "PENDING",
       "caveats": [
-        "Both scenes are Near Real-Time fidelity."
+        "Both scenes have Near Real-Time orbit and pointing fidelity."
       ]
     },
     {
@@ -421,7 +447,7 @@
       "priority": 3,
       "status": "PENDING",
       "caveats": [
-        "Earlier scene is Forecast orbit fidelity; later scene is Near Real-Time."
+        "Orbit and pointing fidelity differs: the earlier scene is Forecast, the later scene is Near Real-Time."
       ]
     }
   ],

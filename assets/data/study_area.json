@@ -30,7 +30,7 @@
       ]
     ],
     "meaning": "Envelope of the shared NISAR GCOV raster grid transformed to WGS84. It is NOT an acquisition footprint, NOT the screening rectangle and NOT a Chagres–Gatún watershed boundary.",
-    "provenance": "preview_metadata.json commonPreviewGrid.overlayBoundsWGS84, generated 2026-11-15T05:42:28.832534+00:00; identical to the provisional envelope reported by José."
+    "provenance": "preview_metadata.json commonPreviewGrid.overlayBoundsWGS84, generated 2026-11-15T05:42:28.832534+00:00; identical to the provisional envelope recorded in the project metadata."
   },
   "boundaryProvenance": "None. No approved boundary vector has been delivered. No watershed polygon is drawn or invented.",
   "approvalStatus": {

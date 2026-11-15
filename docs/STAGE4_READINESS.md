@@ -35,13 +35,13 @@
 
 ## 3. Compatibility of the candidate dates
 
-**Matching (from metadata and filenames):** relative track 040, descending, frame 084, mode 4005, polarization code DHDH, Frequency A with HHHH and HVHV, same producer release token P05023, same CRS (EPSG:32617), same 33,768 × 33,048 grid at 10 m, same gamma-zero linear power convention.
+**Matching (from metadata and filenames):** relative track 040, descending, frame 084, mode 4005, polarization code DHDH, Frequency A with HHHH and HVHV, same Composite Release ID (CRID) P05023, same CRS (EPSG:32617), same 33,768 × 33,048 grid at 10 m, same gamma-zero linear power convention.
 
 **Differences that matter:**
 - **June 16 is Forecast orbit fidelity**; June 28 and October 14 are Near Real-Time. Both pairs that include June 16 need scrutiny of geolocation and radiometric consistency. This is a caution, not proof of a problem.
 - Cycle gaps are consistent with a 12-day repeat (23→24 = 12 days; 24→33 = 108 days; 23→33 = 120 days).
 - All three dates fall in Panama's usual rainy season, so a seasonal contrast may be limited. This is general context, not evidence from the data.
-- The only CMR collection reference (October 14) is `NISAR_L2_GCOV_PROVISIONAL_V1`. The maturity of the product must be confirmed.
+- The only CMR collection reference (October 14) is `NISAR_L2_GCOV_PROVISIONAL_V1`, and that association awaits official CMR verification. The maturity of the product must be confirmed for each scene; June 16 predates the stated start of the PROVISIONAL collection.
 
 ## 4. What would move a pair to GO
 
@@ -51,7 +51,7 @@
 4. QA_REPORT / QA_STATS / QA_SUMMARY are located and reviewed, including for the Forecast scene.
 5. A common-valid-pixel mask (valid in both dates) is defined.
 6. Export validation is confirmed for the June scenes and the GeoTIFF path mismatch is resolved (see `docs/DATA_PROVENANCE.md`).
-7. The preview averaging order (linear power before dB) is confirmed.
+7. The preview averaging order is confirmed (reported by the project owner's script inspection; the effect of zero/negative source values is still to be inspected).
 
 ## 5. Recommended order
 

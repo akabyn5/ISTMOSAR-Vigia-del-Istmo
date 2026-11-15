@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#071321">
   <title>ISTMOSAR — Vigía del Istmo | Space Dogs</title>
   <link rel="preconnect" href="https://unpkg.com" crossorigin>
-  <link rel="preconnect" href="https://{s}.tile.openstreetmap.org" crossorigin>
+  <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
@@ -35,73 +35,109 @@
         <h1>Seeing the Isthmus<br><span>through radar.</span></h1>
         <p class="hero-lede">An accessible starting point for exploring NISAR L-band radar observations and their potential for environmental research in Panama.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#radar">Explore the radar archive <span aria-hidden="true">↗</span></a>
+          <a class="button button-primary" href="#radar">Explore the NISAR previews <span aria-hidden="true">↗</span></a>
           <a class="text-link" href="#science">How the data works</a>
         </div>
-        <p class="hero-note">Early public build · scientific approval and raster previews are still in progress.</p>
+        <p class="hero-note">Early public build · exploratory NISAR HHHH previews are available; scientific approval and quantitative change analysis are still pending.</p>
       </div>
       <div class="hero-aside" aria-label="Project status">
         <div class="orbital-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbital-core">NISAR<br><span>L-BAND</span></div><i class="satellite-dot"></i></div>
         <div class="status-panel">
-          <div><span class="panel-label">APPLICATION</span><strong>Initial release</strong></div>
+          <div><span class="panel-label">APPLICATION</span><strong>Exploratory previews</strong></div>
           <div><span class="panel-label">DATASET</span><strong>Level-2 GCOV</strong></div>
-          <div><span class="panel-label">CHANGE PRODUCTS</span><strong class="pending-text">Pending review</strong></div>
+          <div><span class="panel-label">CHANGE ANALYSIS</span><strong class="pending-text">Visual only</strong></div>
         </div>
       </div>
     </section>
 
     <section class="section-shell intro-strip" aria-label="Project scope">
-      <div><span class="eyebrow">01 / THE PROJECT</span><p>ISTMOSAR is being developed to make selected NISAR observations easier to inspect through a lightweight public web interface.</p></div>
+      <div><span class="eyebrow">01 / THE PROJECT</span><p>ISTMOSAR makes selected NISAR L-band observations easier to inspect through a lightweight public web interface: exploratory previews, acquisition metadata and a visual two-date comparison.</p></div>
       <div class="strip-stat"><strong>3</strong><span>acquisition records<br>catalogued</span></div>
-      <div class="strip-stat"><strong>1</strong><span>interactive map<br>basemap enabled</span></div>
+      <div class="strip-stat"><strong>3</strong><span>exploratory HHHH<br>previews on the map</span></div>
       <div class="strip-stat"><strong>0</strong><span>approved change<br>layers published</span></div>
     </section>
 
     <section class="section-shell content-section" id="radar">
-      <div class="section-heading"><div><p class="eyebrow">02 / RADAR EXPLORER</p><h2>Explore the observation context.</h2></div><p class="section-description">Browse acquisition metadata and the geographic overview. NISAR raster previews will appear here after they are generated and checked.</p></div>
+      <div class="section-heading"><div><p class="eyebrow">02 / RADAR EXPLORER</p><h2>Explore the observation context.</h2></div><p class="section-description">Select an acquisition to see its exploratory NISAR HHHH preview and metadata together. Adjust the radar layer opacity and visibility. Previews are display products, not validated analysis results.</p></div>
       <div class="explorer-layout">
         <div class="map-frame">
-          <div class="map-topline"><span class="map-label"><span class="live-dot"></span> PANAMA · OVERVIEW</span><span class="map-tag">BASEMAP ONLY</span></div>
-          <div id="map" role="region" aria-label="Interactive OpenStreetMap basemap showing a general view of Panama"><div class="map-loading">Loading map…</div></div>
-          <div class="map-foot"><span>Study-area polygon: not yet approved or loaded</span><span>Base map © OpenStreetMap contributors</span></div>
+          <div class="map-topline"><span class="map-label"><span class="live-dot"></span> PANAMA · OVERVIEW</span><span class="map-tag">EXPLORATORY PREVIEW</span></div>
+          <div id="map" role="region" aria-label="Interactive map of Panama with the selected NISAR HHHH backscatter preview"><div class="map-loading">Loading map…</div></div>
+          <div class="map-foot"><span>Study-area polygon: not approved · dashed outline = provisional raster extent</span><span>Base map © OpenStreetMap contributors · NISAR data: NASA/ISRO via ASF DAAC</span></div>
         </div>
         <aside class="scene-panel">
           <p class="eyebrow">ACQUISITION CATALOGUE</p>
           <label for="scene-select" class="field-label">Select a NISAR scene</label>
           <select id="scene-select" class="scene-select" aria-describedby="scene-status"></select>
+          <div class="layer-controls" id="layer-controls">
+            <p class="eyebrow">RADAR LAYER</p>
+            <label class="compare-check" for="radar-visible"><input type="checkbox" id="radar-visible" checked><span>Show radar preview</span></label>
+            <label class="field-label" for="radar-opacity">Opacity: <output id="radar-opacity-value" for="radar-opacity">90%</output></label>
+            <input type="range" id="radar-opacity" class="range-input" min="10" max="100" step="5" value="90">
+          </div>
           <div class="scene-date" id="scene-date">—</div>
           <div class="scene-meta" id="scene-meta" aria-live="polite"></div>
-          <div class="notice notice-amber" id="scene-status"><strong>Metadata record only</strong><p>No scene raster preview is currently loaded. Geographic intersection with the final study area has not been approved.</p></div>
+          <div class="notice notice-amber" id="scene-status"><strong>Loading scene metadata…</strong><p></p></div>
+          <ul class="status-list" id="scene-checks" aria-label="Verification status of the selected scene"></ul>
+          <p class="scene-note" id="scene-note" hidden></p>
           <a class="small-link" href="#data-sources">Data provenance and references <span aria-hidden="true">→</span></a>
         </aside>
       </div>
     </section>
 
     <section class="section-shell content-section change-section" id="change">
-      <div class="section-heading"><div><p class="eyebrow">03 / CHANGE EXPLORER</p><h2>Comparison requires evidence.</h2></div><p class="section-description">Visual differences are not automatically environmental change. This section will be enabled only when spatial, quality, and scientific checks support a comparison.</p></div>
+      <div class="section-heading"><div><p class="eyebrow">03 / CHANGE EXPLORER</p><h2>Comparison requires evidence.</h2></div><p class="section-description">Overlay two exploratory previews and crossfade between them. This is a visual comparison only. Visual differences are not automatically environmental change, and quantitative change analysis stays disabled until spatial, quality and scientific checks are complete.</p></div>
       <div class="change-grid">
-        <div class="change-card change-card-primary"><span class="card-index">A / CURRENT STATUS</span><div class="status-ring">—</div><h3>No approved change layer</h3><p>Quantitative pairwise outputs are not published in this release. The site will not display synthetic examples as real Panama observations.</p><span class="pill pill-pending">Scientific review pending</span></div>
-        <div class="change-card"><span class="card-index">B / ACCEPTANCE CONDITIONS</span><ul class="check-list"><li><span class="check-mark">01</span>Approved study-area geometry and verified scene footprints</li><li><span class="check-mark">02</span>Reviewed GCOV quality evidence and mask interpretation</li><li><span class="check-mark">03</span>Common-valid pixels and compatible measurement conventions</li><li><span class="check-mark">04</span>Reproducible output, statistics, and limitations documented</li></ul></div>
+        <div class="change-card change-card-primary"><span class="card-index">A / CURRENT STATUS</span><div class="status-ring">—</div><h3>No approved change layer</h3><p>Quantitative pairwise outputs are not published. The visual comparison below overlays single-date previews and computes nothing. The site will not display synthetic examples as real Panama observations.</p><span class="pill pill-pending">Scientific review pending</span></div>
+        <div class="change-card"><span class="card-index">B / CONDITIONS FOR QUANTITATIVE CHANGE ANALYSIS</span><ul class="check-list"><li><span class="check-mark">01</span>Approved study-area geometry and verified scene footprints</li><li><span class="check-mark">02</span>Reviewed GCOV quality evidence and mask interpretation</li><li><span class="check-mark">03</span>Common-valid pixels and compatible measurement conventions</li><li><span class="check-mark">04</span>Reproducible output, statistics, and limitations documented</li></ul></div>
       </div>
     </section>
 
     <section class="section-shell content-section" id="science">
-      <div class="section-heading"><div><p class="eyebrow">04 / SCIENCE &amp; METHODOLOGY</p><h2>Radar measurements, not photographs.</h2></div><p class="section-description">A concise guide to the measurement represented by the selected product and to the checks required before interpreting change.</p></div>
+      <div class="section-heading"><div><p class="eyebrow">04 / SCIENCE &amp; METHODOLOGY</p><h2>Radar measurements, not photographs.</h2></div><p class="section-description">What the previews show, how they are made, and what they cannot tell you. The map shows exploratory image previews, not validated analysis results.</p></div>
       <div class="science-grid">
-        <article class="science-item"><span class="science-number">01</span><h3>Synthetic Aperture Radar</h3><p>SAR is an active microwave remote-sensing technique. The recorded return depends on the interaction of the radar signal with the observed surface and on acquisition geometry.</p></article>
-        <article class="science-item"><span class="science-number">02</span><h3>NISAR L-band</h3><p>The project examines NISAR L-band observations. Longer radar wavelengths interact with vegetation and surface features differently from shorter wavelengths; interpretation still depends on surface structure, moisture, and geometry.</p></article>
-        <article class="science-item"><span class="science-number">03</span><h3>Level-2 GCOV</h3><p>GCOV provides geocoded polarimetric covariance measurements as calibrated gamma-zero power, with terrain-related radiometric correction and supporting layers such as masks and number of looks.</p></article>
-        <article class="science-item"><span class="science-number">04</span><h3>Polarization and power</h3><p>HHHH and HVHV are real-valued diagonal covariance terms. HHHH is co-polarized; HVHV is cross-polarized. They are distinct measurements and must not be treated as interchangeable.</p></article>
+        <article class="science-item"><span class="science-number">01</span><h3>NISAR and L-band SAR</h3><p>NISAR is a joint NASA–ISRO Earth-observation radar mission. Its L-band synthetic aperture radar (SAR) is an active microwave instrument: it transmits pulses and records the energy scattered back, called backscatter. The return depends on surface roughness, moisture, vegetation structure and viewing geometry. It is not a photograph.</p></article>
+        <article class="science-item"><span class="science-number">02</span><h3>Level-2 GCOV</h3><p>GCOV (Geocoded Polarimetric Covariance) is a Level-2 product on a map grid, here UTM zone 17N at 10 m pixels. Backscatter is gamma-zero linear power with terrain-related radiometric correction. Supporting layers include quality-related masks and number of looks; the masks are not applied to these previews.</p></article>
+        <article class="science-item"><span class="science-number">03</span><h3>HHHH and HVHV</h3><p>HHHH is the co-polarized diagonal covariance term (horizontal transmit, horizontal receive); HVHV is the cross-polarized term. They are real-valued, distinct measurements that respond to different scattering and must not be treated as interchangeable. The previews show HHHH only.</p></article>
+        <article class="science-item"><span class="science-number">04</span><h3>Provisional data</h3><p>The Composite Release ID (CRID) of all three granules, P05023, is the one ASF documents for PROVISIONAL NISAR products. Provisional products are calibrated and partially validated; quality may not be optimal, and validated reprocessing may supersede them. Each scene’s collection is still pending verification against its official CMR record.</p></article>
       </div>
-      <div class="formula-band"><div><span class="eyebrow">RADIOMETRIC DISPLAY</span><h3>Linear power to decibels</h3><p>For positive gamma-zero power values, the dB representation is calculated with the power conversion shown here.</p></div><div class="formula">γ⁰<sub>dB</sub> = 10 log<sub>10</sub>(γ⁰<sub>linear</sub>)</div></div>
-      <p class="method-caveat">A change in backscatter is not, by itself, proof of flooding, water-level change, deforestation, or any single cause. Environmental interpretation requires contextual evidence and validated processing.</p>
+      <div class="formula-band"><div><span class="eyebrow">RADIOMETRIC DISPLAY</span><h3>Linear power to decibels</h3><p>GCOV values are linear power. Positive values are converted to decibels with the power conversion shown here; the factor is 10 because these are power values (20 would be for amplitude). NoData and values that are non-positive after resampling have no dB value and are shown transparent. The effect of non-positive source values on neighbouring averaged pixels has not yet been investigated.</p></div><div class="formula">γ⁰<sub>dB</sub> = 10 log<sub>10</sub>(γ⁰<sub>linear</sub>)</div></div>
+      <div class="method-grid">
+        <article class="method-card"><span class="card-index">PREVIEW METHOD</span><h3>How the previews are made</h3>
+          <ol class="method-steps">
+            <li>Read the Stage 2 Frequency A HHHH GeoTIFF in gamma-zero linear power.</li>
+            <li>Reproject to Web Mercator (EPSG:3857) and average-resample the linear-power values to 1800 × 1773 pixels.</li>
+            <li>Convert the positive resampled values to dB. Non-positive resampled values are left transparent.</li>
+            <li>Apply one shared grayscale stretch, −25.9 to −4.4 dB (2nd–98th percentile of the three previews), to every scene.</li>
+            <li>Export lightweight transparent PNGs. Product quality masks are not applied.</li>
+          </ol>
+          <p class="method-small">The averaging is done on linear power before the dB conversion. Previews are about 190 m per pixel, much coarser than the 10 m source data, and are not a substitute for the original measurements.</p>
+        </article>
+        <article class="method-card"><span class="card-index">PROVISIONAL EXTENT</span><h3>The dashed rectangle is not a study area</h3>
+          <p>The overlay and the dashed outline show the envelope of the shared raster grid transformed to latitude and longitude. It is a provisional visualization extent. It is not an acquisition footprint, not a watershed and not an approved study-area boundary. About half of each preview is transparent because the imaged swath does not fill the rectangle.</p>
+          <p class="method-small">Data quality limits: QA reports and masks have not been reviewed, no common-valid mask exists between dates, and the June 16 scene has Forecast orbit and pointing fidelity (June 28 and October 14 are Near Real-Time).</p>
+        </article>
+      </div>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <caption class="card-index">PREVIEW VERSUS VALIDATED ANALYSIS</caption>
+          <thead><tr><th scope="col"></th><th scope="col">Exploratory image preview (this site)</th><th scope="col">Scientifically validated analysis</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Purpose</th><td>Inspect the data visually and compare two dates by eye</td><td>Support a stated scientific conclusion</td></tr>
+            <tr><th scope="row">Quality control</th><td>Masks not applied; products PROVISIONAL</td><td>Reviewed QA reports, mask policy and common-valid pixels</td></tr>
+            <tr><th scope="row">Study area</th><td>Provisional raster extent only</td><td>Approved boundary and verified footprints</td></tr>
+            <tr><th scope="row">Result</th><td>Images; no difference map or statistics</td><td>Reproducible numbers with stated uncertainty</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="method-caveat">A visual difference between two dates is not, by itself, proof of flooding, water-level change, deforestation or any single cause. Backscatter changes can also come from soil or vegetation moisture, surface roughness, acquisition geometry, orbit quality, processing differences and speckle. Environmental interpretation requires independent evidence and validated processing.</p>
     </section>
 
     <section class="section-shell content-section about-section" id="about">
       <div class="section-heading"><div><p class="eyebrow">05 / ABOUT &amp; DATA SOURCES</p><h2>Built in Panama by Space Dogs.</h2></div><p class="section-description">ISTMOSAR is an ARPIP research and technology-development project within Space Dogs, a Panama-based student-led space technology group.</p></div>
       <div class="about-grid">
-        <div class="about-copy"><h3>Project intent</h3><p>Develop a lightweight public interface for exploring selected NISAR L-band observations and communicating the scientific workflow, data provenance, and limitations clearly.</p><h3>Implementation approach</h3><p>HTML, CSS, and JavaScript provide the static application. Leaflet supports the interactive map; OpenStreetMap supplies the basemap. Small JSON files describe the scenes and study-area status. Raster previews will be added only after processing and validation.</p></div>
-        <div class="source-list" id="data-sources"><span class="eyebrow">REFERENCE STARTING POINTS</span><a href="https://nisar.jpl.nasa.gov/" target="_blank" rel="noopener noreferrer"><span>NASA–ISRO NISAR mission</span><b>↗</b></a><a href="https://asfopensarlab.github.io/NISAR_Cookbook/gcov-intro/" target="_blank" rel="noopener noreferrer"><span>ASF NISAR Cookbook · GCOV introduction</span><b>↗</b></a><a href="https://asf.alaska.edu/" target="_blank" rel="noopener noreferrer"><span>Alaska Satellite Facility</span><b>↗</b></a><a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer"><span>Leaflet documentation</span><b>↗</b></a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer"><span>OpenStreetMap attribution</span><b>↗</b></a></div>
+        <div class="about-copy"><h3>Project intent</h3><p>Develop a lightweight public interface for exploring selected NISAR L-band observations and communicating the scientific workflow, data provenance, and limitations clearly.</p><h3>Implementation approach</h3><p>HTML, CSS, and JavaScript provide the static application. Leaflet supports the interactive map; OpenStreetMap supplies the basemap. Small JSON files describe the scenes and the provisional extent. The previews are lightweight PNG display products generated outside this repository from Stage 2 GeoTIFFs; the original HDF5 files and full-size GeoTIFFs are not stored on GitHub. Previews are exploratory and are not scientifically approved.</p></div>
+        <div class="source-list" id="data-sources"><span class="eyebrow">REFERENCE STARTING POINTS</span><a href="https://nisar.jpl.nasa.gov/" target="_blank" rel="noopener noreferrer"><span>NASA–ISRO NISAR mission</span><b>↗</b></a><a href="https://asfopensarlab.github.io/NISAR_Cookbook/gcov-intro/" target="_blank" rel="noopener noreferrer"><span>ASF NISAR Cookbook · GCOV introduction</span><b>↗</b></a><a href="https://asf.alaska.edu/" target="_blank" rel="noopener noreferrer"><span>Alaska Satellite Facility</span><b>↗</b></a><a href="https://nisar-docs.asf.alaska.edu/availability-overview/" target="_blank" rel="noopener noreferrer"><span>ASF · NISAR data availability and PROVISIONAL products</span><b>↗</b></a><a href="https://www.earthdata.nasa.gov/data/catalog/asf-nisar-l2-gcov-provisional-v1-1" target="_blank" rel="noopener noreferrer"><span>NASA Earthdata · NISAR Provisional GCOV collection</span><b>↗</b></a><a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer"><span>Leaflet documentation</span><b>↗</b></a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer"><span>OpenStreetMap attribution</span><b>↗</b></a></div>
       </div>
     </section>
   </main>
