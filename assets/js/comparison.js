@@ -67,9 +67,24 @@
       el("p", { id: "compare-notice-text" })
     ]);
 
-    function field(labelText, control) {
-      return el("label", { class: "compare-field" }, [el("span", { class: "field-label", text: labelText }), control]);
+    function field(labelText, control, helpText) {
+      var wrapper = el("label", { class: "compare-field" }, [
+        el("span", { class: "field-label", text: labelText }),
+        control
+      ]);
+      
+      if (helpText) {
+        wrapper.appendChild(
+          el("small", {
+            class: "compare-help",
+            text: helpText
+          })
+        );
+      }
+      
+      return wrapper;
     }
+
     function check(labelText, input) {
       return el("label", { class: "compare-check" }, [input, el("span", { text: labelText })]);
     }
@@ -79,8 +94,8 @@
         el("span", { class: "card-index", text: "C / TWO-DATE VISUAL COMPARISON" }), pill
       ]),
       el("div", { class: "compare-controls" }, [
-        field("Earlier acquisition", earlierSel),
-        field("Later acquisition", laterSel),
+        field("Before (earlier acquisition)", earlierSel, "The latest acquisition cannot be selected because no later scene exists."),
+        field("After (later acquisition)", laterSel, "Only acquisitions later than your selected Before date are available."),
         field("Crossfade: earlier \u2190 \u2192 later", fade),
         field("Layer opacity", opacity),
         el("div", { class: "compare-checks" }, [check("Show earlier layer", showEarlier), check("Show later layer", showLater)])
