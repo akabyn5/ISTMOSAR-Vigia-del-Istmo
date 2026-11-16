@@ -1,65 +1,55 @@
 # Stage 4 Scientific Readiness Summary (MH-02)
 
-*Prepared by Maryfer Higuera for José Peñalba · 2026-11-15 · DRAFT based only on the evidence listed in section 1. José makes the final approval decision.*
+*Maryfer Higuera for José Peñalba · updated 2026-11-15 · DRAFT. José makes the final approval decision.*
 
 ## Bottom line
 
-**No pair is GO. All three pairs are PENDING.** No evidence found so far makes any pair incompatible (so none is NO-GO), but the checks that would justify approval (AOI, official footprint, mask interpretation, QA reports) have not been completed. Identical grid size and alignment are not approval.
+**No pair is GO. All three pairs remain PENDING.** The evidence that was missing in the first draft (QA reports, footprints, AOI candidates) has now been **located locally by José, but has not been reviewed**. Nothing found so far makes a pair incompatible (so none is NO-GO), and nothing yet justifies approval. Identical grid size and alignment are not approval.
 
 | Priority | Pair | Interval | Status | Main reason |
 |---|---|---:|---|---|
-| 1 | June 16 – June 28 | 12 days | **PENDING** | Forecast vs Near Real-Time orbit fidelity; AOI, footprint, masks, QA open |
-| 2 | June 28 – October 14 | 108 days | **PENDING** | Same fidelity (both Near Real-Time), but AOI, footprint, masks, QA open |
-| 3 | June 16 – October 14 | 120 days | **PENDING** | Forecast vs Near Real-Time orbit fidelity; AOI, footprint, masks, QA open |
+| 1 | June 16 – June 28 | 12 days | **PENDING** | Forecast vs Near Real-Time fidelity; QA, footprint, AOI, masks not reviewed |
+| 2 | June 28 – October 14 | 108 days | **PENDING** | Same fidelity (both Near Real-Time); QA, footprint, AOI, masks not reviewed |
+| 3 | June 16 – October 14 | 120 days | **PENDING** | Forecast vs Near Real-Time fidelity; QA, footprint, AOI, masks not reviewed |
 
-## 1. Evidence examined
-
-- HDF5 metadata inspections of the three granules (`June16/June28/October14_metadata.txt`).
-- `georeferencing_validation_report.json` (October 14 export only).
-- `preview_metadata.json` (preview generation, 2026-11-15).
-- José's Phase B handoff message (CMR, grid, AOI status).
-- Repository files `scenes.json` and `study_area.json`.
-
-**Not seen:** QA_REPORT, QA_STATS, QA_SUMMARY, any AOI approval record, any official CMR footprint, raw UMM-G records, validation reports for the June exports.
-
-## 2. Review items
+## 1. Review items
 
 | Item | Finding | State |
 |---|---|---|
-| Current AOI approval status | No approved boundary vector. `study_area.json`: `geometryApproved: false`. The map shows only a provisional raster extent. | **Not approved** |
-| Official footprint evidence | None. The WGS84 bounds are the envelope of the raster grid, not a CMR footprint. UMM-G records not recovered. | **Missing** |
-| GCOV `mask` and `inputDataExceptionMask` | Both exist in all three files (uint8, same shape as the grid). Their values and meaning were not inspected, and they were **not applied** to the previews. | **Interpretation pending** |
-| QA_REPORT / QA_STATS / QA_SUMMARY | Not provided and not examined. The metadata inspections covered only the Frequency A grid. | **Not reviewed** |
-| Scientific compatibility of dates | See section 3. | **Compatible on metadata; unconfirmed on quality** |
+| AOI approval | Two candidates exist (legacy PMCC 1998 subwatersheds; MiAmbiente HydroBASINS). None selected or approved. `study_area.json`: `geometryApproved: false`. | **Not approved** |
+| Official footprint | Three CMR spatial-extent GeoJSON and three footprint KML located locally. Not yet compared with the raster grid. CMR record-to-granule match not validated. | **Located, not reviewed** |
+| `mask` / `inputDataExceptionMask` | Present in all three files; not applied to the previews; meaning and policy not decided. | **Interpretation pending** |
+| QA_REPORT / QA_STATS / QA_SUMMARY | Three PDF reports, three HDF5 statistics and three CSV summaries located locally. Availability is now established; **validity and content are not reviewed**. | **Located, not reviewed** |
+| Date compatibility | See section 2. | **Compatible on metadata; quality unconfirmed** |
 | Pair approval | None given. | **Pending** |
 
-## 3. Compatibility of the candidate dates
+## 2. Compatibility of the candidate dates
 
-**Matching (from metadata and filenames):** relative track 040, descending, frame 084, mode 4005, polarization code DHDH, Frequency A with HHHH and HVHV, same Composite Release ID (CRID) P05023, same CRS (EPSG:32617), same 33,768 × 33,048 grid at 10 m, same gamma-zero linear power convention.
+**Matching:** relative track 040, descending, frame 084, mode 4005, DHDH, Frequency A (HHHH, HVHV), release token P05023, EPSG:32617, 33,768 × 33,048 grid at 10 m, gamma-zero linear power.
 
 **Differences that matter:**
-- **June 16 is Forecast orbit fidelity**; June 28 and October 14 are Near Real-Time. Both pairs that include June 16 need scrutiny of geolocation and radiometric consistency. This is a caution, not proof of a problem.
-- Cycle gaps are consistent with a 12-day repeat (23→24 = 12 days; 24→33 = 108 days; 23→33 = 120 days).
-- All three dates fall in Panama's usual rainy season, so a seasonal contrast may be limited. This is general context, not evidence from the data.
-- The only CMR collection reference (October 14) is `NISAR_L2_GCOV_PROVISIONAL_V1`, and that association awaits official CMR verification. The maturity of the product must be confirmed for each scene; June 16 predates the stated start of the PROVISIONAL collection.
+- June 16 is **Forecast** orbit fidelity; June 28 and October 14 are **Near Real-Time**. Pairs including June 16 need extra scrutiny of geolocation and radiometry (a caution, not a finding).
+- All three dates fall in Panama's usual rainy season, so seasonal contrast may be limited (general context, not data evidence).
+- The only collection reference seen (October 14) is `NISAR_L2_GCOV_PROVISIONAL_V1`; product maturity must be confirmed.
 
-## 4. What would move a pair to GO
+## 3. Raster and processing checks completed (reported by José)
 
-1. José approves an AOI (or an explicit decision to use the raster extent as a screening area).
-2. An official footprint (from the raw UMM-G or ASF) is checked against that area.
-3. The meaning of `mask` and `inputDataExceptionMask` is read from the product documentation and a mask policy is chosen.
-4. QA_REPORT / QA_STATS / QA_SUMMARY are located and reviewed, including for the Forecast scene.
-5. A common-valid-pixel mask (valid in both dates) is defined.
-6. Export validation is confirmed for the June scenes and the GeoTIFF path mismatch is resolved (see `docs/DATA_PROVENANCE.md`).
-7. The preview averaging order is confirmed (reported by the project owner's script inspection; the effect of zero/negative source values is still to be inspected).
+- Preview processing order confirmed: average resampling of linear power, then dB.
+- No zero, negative or infinite source values in the three Stage 2 HHHH rasters.
+- October 14: Stage 2 and `real_gcov_geotiff` rasters are pixel-identical. **Not established for June 16 and June 28.**
+
+## 4. What moves a pair to GO
+
+1. Review the three QA reports, statistics and summaries (including the Forecast scene).
+2. Compare each CMR footprint with the raster grid and validate each CMR record against its granule.
+3. José selects and approves the study-area geometry.
+4. Read the meaning of `mask` and `inputDataExceptionMask`; choose a mask policy and a common-valid-pixel rule.
+5. Confirm equivalence of the June Stage 2 exports with their validated exports.
 
 ## 5. Recommended order
 
-Review the **June 28 – October 14** pair first for readiness: both scenes are Near Real-Time, so the fidelity question is avoided. Keep **June 16 – June 28** as the first-priority pair for the demonstration only if the Forecast-fidelity check passes. Do not display a difference map, change statistics or flooding estimate for any pair until it is approved.
+Review **June 28 – October 14** first for readiness: both scenes are Near Real-Time. Keep **June 16 – June 28** as the first-priority demonstration pair only if the Forecast-fidelity and QA checks pass. Show no difference map, change statistics or flooding estimate for any pair until approved.
 
-## 6. Evidence still needed from José
+## 6. Still needed to finish this review
 
-- QA_REPORT, QA_STATS, QA_SUMMARY for the three scenes (or their location in the HDF5 files).
-- Any AOI decision and its source.
-- Raw UMM-G JSON records.
-- Validation reports for the June GeoTIFF exports.
+The QA PDFs, QA summary CSVs, the three CMR GeoJSON files and the AOI candidate files. They are not in this repository; this summary does not describe their contents.

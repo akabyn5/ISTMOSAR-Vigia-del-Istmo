@@ -1,8 +1,8 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 2,
   "status": "exploratory-previews-pending-scientific-approval",
   "lastUpdated": "2026-11-15",
-  "maintainer": "Maryfer Higuera",
+  "maintainer": "Maryfer Higuera (Scientific Data Lead)",
   "scopeNote": "Single-acquisition HHHH backscatter previews only. No change detection, difference map, change statistics or environmental conclusion has been calculated or approved.",
   "stateDefinitions": {
     "metadataVerified": "HDF5 attributes inspected (grid, CRS, datasets, units). Does not include the raw CMR UMM-G record.",
@@ -46,7 +46,7 @@
     "displayUnits": "dB",
     "colorMap": "grayscale",
     "resampling": "average",
-    "alphaPolicy": "transparent where the resampled (destination) value is NoData, non-finite or non-positive; applied after resampling",
+    "alphaPolicy": "transparent for NoData, non-finite, and non-positive values",
     "stretchPercentiles": [
       2.0,
       98.0
@@ -59,15 +59,7 @@
     "previewWidthPx": 1800,
     "previewHeightPx": 1773,
     "label": "Exploratory display product. Not a substitute for the original measurements and not QA-approved.",
-    "provenanceSource": "preview_metadata.json (generated 2026-11-15T05:42:28.832534+00:00)",
-    "processingOrder": [
-      "Read the Stage 2 Frequency A HHHH GeoTIFF (gamma-zero linear power).",
-      "Reproject to EPSG:3857 and average-resample the LINEAR power values to 1800 x 1773 px.",
-      "Convert positive resampled values to dB: 10 * log10(power).",
-      "Apply the shared 2nd-98th percentile display stretch.",
-      "Export a transparent grayscale PNG (QA masks not applied)."
-    ],
-    "processingOrderVerification": "Average resampling of linear power before the dB conversion was confirmed by inspection of the preview-generation script (reported by the project owner). Whether non-positive source values influenced neighbouring averaged pixels has not yet been investigated."
+    "provenanceSource": "preview_metadata.json (generated 2026-11-15T05:42:28.832534+00:00)"
   },
   "scenes": [
     {
@@ -102,23 +94,19 @@
         "collectionConceptId": null,
         "collectionShortName": null,
         "collectionStatus": "PENDING",
-        "collectionNote": "Collection maturity is not assigned. This acquisition (2026-06-16) predates the stated 2026-06-17 start of the PROVISIONAL collection, so its collection must be confirmed from its official granule/CMR record."
+        "lookupUrl": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4250187623-ASF",
+        "localEvidence": "Exact-search JSON and concept-ID JSON located locally by José (stage_4_readiness_evidence). Content and record-to-granule match not yet validated."
       },
       "productDetails": {
         "level": "L2",
         "type": "GCOV",
         "filenameProductToken": "PR",
-        "crid": "P05023",
-        "cridMeaning": "Composite Release ID (CRID) from the granule filename",
+        "producerReleaseToken": "P05023",
         "acquisitionMode": "4005",
         "polarizationCode": "DHDH",
-        "orbitPointingFidelityToken": "F",
-        "frameCoverageToken": "F",
-        "processingSiteToken": "J",
-        "tokenSource": "Filename tokens after the CRID follow the ASF NISAR naming convention: orbit and pointing fidelity (F = Forecast, N = Near Real-Time), frame coverage (F = Full), processing site (J = JPL). Confirm against the JPL product specification D-102274.",
-        "note": "Acquisition mode, track, direction and the filename tokens come from the granule filename and project records, not from HDF5 attributes."
+        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
       },
-      "orbitFidelityNote": "Orbit and pointing fidelity: Forecast (filename token F)",
+      "orbitFidelityNote": "Forecast (filename token F)",
       "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
       "measurement": {
         "primary": "Frequency A HHHH",
@@ -142,8 +130,8 @@
       },
       "catalogReference": {
         "catalog": "NASA CMR / ASF DAAC",
-        "url": null,
-        "status": "PENDING raw UMM-G / ASF URL"
+        "url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4250187623-ASF",
+        "status": "lookup endpoint only; returned record not yet validated"
       },
       "preview": {
         "path": "assets/maps/june16_preview.png",
@@ -170,16 +158,19 @@
           ]
         ],
         "boundsMeaning": "Envelope of the projected raster grid. NOT an official CMR footprint and NOT an approved AOI.",
-        "status": "generated-per-preview_metadata; file presence and visual check required before release",
-        "qaMaskApplied": false
+        "status": "generated; publicly displayed and checked visually (reported by José on the public site); not scientifically approved",
+        "qaMaskApplied": false,
+        "processingOrder": "Stage 2 HHHH GeoTIFF (linear) -> reproject and average-resample linear power -> 10*log10 -> shared stretch -> transparent PNG (confirmed by José)"
       },
       "verification": {
         "metadataVerified": true,
         "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
         "rasterExported": true,
         "rasterPreviewGenerated": true,
-        "rasterPreviewVisuallyVerified": false,
-        "approvedForComparison": false
+        "rasterPreviewVisuallyVerified": true,
+        "approvedForComparison": false,
+        "rasterPreviewVisuallyVerifiedBy": "José Peñalba (public site, desktop and mobile); June 16 also by Maryfer locally",
+        "sourceNonPositiveCheck": "Passed: 0 zero, 0 negative, 0 infinite source values (inspect_stage2_nonpositive.py, reported by José)"
       },
       "footprintApprovedForStudyArea": false,
       "scientificApproval": "pending",
@@ -217,23 +208,19 @@
         "collectionConceptId": null,
         "collectionShortName": null,
         "collectionStatus": "PENDING",
-        "collectionNote": "CRID P05023 is the Composite Release ID that ASF documents for PROVISIONAL products, but this scene's collection is not confirmed until its CMR record is checked."
+        "lookupUrl": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4240958164-ASF",
+        "localEvidence": "Exact-search JSON and concept-ID JSON located locally by José (stage_4_readiness_evidence). Content and record-to-granule match not yet validated."
       },
       "productDetails": {
         "level": "L2",
         "type": "GCOV",
         "filenameProductToken": "PR",
-        "crid": "P05023",
-        "cridMeaning": "Composite Release ID (CRID) from the granule filename",
+        "producerReleaseToken": "P05023",
         "acquisitionMode": "4005",
         "polarizationCode": "DHDH",
-        "orbitPointingFidelityToken": "N",
-        "frameCoverageToken": "F",
-        "processingSiteToken": "J",
-        "tokenSource": "Filename tokens after the CRID follow the ASF NISAR naming convention: orbit and pointing fidelity (F = Forecast, N = Near Real-Time), frame coverage (F = Full), processing site (J = JPL). Confirm against the JPL product specification D-102274.",
-        "note": "Acquisition mode, track, direction and the filename tokens come from the granule filename and project records, not from HDF5 attributes."
+        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
       },
-      "orbitFidelityNote": "Orbit and pointing fidelity: Near Real-Time (filename token N)",
+      "orbitFidelityNote": "Near Real-Time (filename token N)",
       "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
       "measurement": {
         "primary": "Frequency A HHHH",
@@ -257,8 +244,8 @@
       },
       "catalogReference": {
         "catalog": "NASA CMR / ASF DAAC",
-        "url": null,
-        "status": "PENDING raw UMM-G / ASF URL"
+        "url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4240958164-ASF",
+        "status": "lookup endpoint only; returned record not yet validated"
       },
       "preview": {
         "path": "assets/maps/june28_preview.png",
@@ -285,16 +272,19 @@
           ]
         ],
         "boundsMeaning": "Envelope of the projected raster grid. NOT an official CMR footprint and NOT an approved AOI.",
-        "status": "generated-per-preview_metadata; file presence and visual check required before release",
-        "qaMaskApplied": false
+        "status": "generated; publicly displayed and checked visually (reported by José on the public site); not scientifically approved",
+        "qaMaskApplied": false,
+        "processingOrder": "Stage 2 HHHH GeoTIFF (linear) -> reproject and average-resample linear power -> 10*log10 -> shared stretch -> transparent PNG (confirmed by José)"
       },
       "verification": {
         "metadataVerified": true,
         "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
         "rasterExported": true,
         "rasterPreviewGenerated": true,
-        "rasterPreviewVisuallyVerified": false,
-        "approvedForComparison": false
+        "rasterPreviewVisuallyVerified": true,
+        "approvedForComparison": false,
+        "rasterPreviewVisuallyVerifiedBy": "José Peñalba (public site, desktop and mobile); June 16 also by Maryfer locally",
+        "sourceNonPositiveCheck": "Passed: 0 zero, 0 negative, 0 infinite source values (inspect_stage2_nonpositive.py, reported by José)"
       },
       "footprintApprovedForStudyArea": false,
       "scientificApproval": "pending",
@@ -331,24 +321,20 @@
         "ummG": "PENDING RAW JSON VERIFICATION",
         "collectionConceptId": "C2854338529-ASF",
         "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
-        "collectionStatus": "Collection association awaiting official CMR verification (raw UMM-G record not yet inspected).",
-        "collectionNote": "Associated with NISAR_L2_GCOV_PROVISIONAL_V1; this association is awaiting official CMR verification. PROVISIONAL products are calibrated and partially validated, and quality may not be optimal."
+        "collectionStatus": "From an earlier extracted CMR summary (reported by José); raw record not yet inspected.",
+        "lookupUrl": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4371433684-ASF",
+        "localEvidence": "Exact-search JSON and concept-ID JSON located locally by José (stage_4_readiness_evidence). Content and record-to-granule match not yet validated."
       },
       "productDetails": {
         "level": "L2",
         "type": "GCOV",
         "filenameProductToken": "PR",
-        "crid": "P05023",
-        "cridMeaning": "Composite Release ID (CRID) from the granule filename",
+        "producerReleaseToken": "P05023",
         "acquisitionMode": "4005",
         "polarizationCode": "DHDH",
-        "orbitPointingFidelityToken": "N",
-        "frameCoverageToken": "F",
-        "processingSiteToken": "J",
-        "tokenSource": "Filename tokens after the CRID follow the ASF NISAR naming convention: orbit and pointing fidelity (F = Forecast, N = Near Real-Time), frame coverage (F = Full), processing site (J = JPL). Confirm against the JPL product specification D-102274.",
-        "note": "Acquisition mode, track, direction and the filename tokens come from the granule filename and project records, not from HDF5 attributes."
+        "note": "Mode, track, direction and fidelity come from the granule filename and José's handoff, not from HDF5 attributes."
       },
-      "orbitFidelityNote": "Orbit and pointing fidelity: Near Real-Time (filename token N)",
+      "orbitFidelityNote": "Near Real-Time (filename token N)",
       "radiometricConvention": "gamma-zero, linear power, units 1 (dimensionless)",
       "measurement": {
         "primary": "Frequency A HHHH",
@@ -372,8 +358,8 @@
       },
       "catalogReference": {
         "catalog": "NASA CMR / ASF DAAC",
-        "url": null,
-        "status": "PENDING raw UMM-G / ASF URL"
+        "url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4371433684-ASF",
+        "status": "lookup endpoint only; returned record not yet validated"
       },
       "preview": {
         "path": "assets/maps/october14_preview.png",
@@ -400,16 +386,20 @@
           ]
         ],
         "boundsMeaning": "Envelope of the projected raster grid. NOT an official CMR footprint and NOT an approved AOI.",
-        "status": "generated-per-preview_metadata; file presence and visual check required before release",
-        "qaMaskApplied": false
+        "status": "generated; publicly displayed and checked visually (reported by José on the public site); not scientifically approved",
+        "qaMaskApplied": false,
+        "processingOrder": "Stage 2 HHHH GeoTIFF (linear) -> reproject and average-resample linear power -> 10*log10 -> shared stretch -> transparent PNG (confirmed by José)"
       },
       "verification": {
         "metadataVerified": true,
         "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
         "rasterExported": true,
         "rasterPreviewGenerated": true,
-        "rasterPreviewVisuallyVerified": false,
-        "approvedForComparison": false
+        "rasterPreviewVisuallyVerified": true,
+        "approvedForComparison": false,
+        "rasterPreviewVisuallyVerifiedBy": "José Peñalba (public site, desktop and mobile); June 16 also by Maryfer locally",
+        "sourceNonPositiveCheck": "Passed: 0 zero, 0 negative, 0 infinite source values (inspect_stage2_nonpositive.py, reported by José)",
+        "rasterEquivalence": "Stage 2 HHHH GeoTIFF is EQUIVALENT to the separate real_gcov_geotiff export: identical grid metadata and NaN-aware exact equality over 1,115,964,864 pixels (reported by José). Not established for June scenes."
       },
       "footprintApprovedForStudyArea": false,
       "scientificApproval": "pending",
@@ -425,7 +415,7 @@
       "priority": 1,
       "status": "PENDING",
       "caveats": [
-        "Orbit and pointing fidelity differs: the earlier scene is Forecast, the later scene is Near Real-Time."
+        "Earlier scene is Forecast orbit fidelity; later scene is Near Real-Time."
       ]
     },
     {
@@ -436,7 +426,7 @@
       "priority": 2,
       "status": "PENDING",
       "caveats": [
-        "Both scenes have Near Real-Time orbit and pointing fidelity."
+        "Both scenes are Near Real-Time fidelity."
       ]
     },
     {
@@ -447,9 +437,23 @@
       "priority": 3,
       "status": "PENDING",
       "caveats": [
-        "Orbit and pointing fidelity differs: the earlier scene is Forecast, the later scene is Near Real-Time."
+        "Earlier scene is Forecast orbit fidelity; later scene is Near Real-Time."
       ]
     }
   ],
-  "pairsNote": "All pairs are PENDING. Identical grid dimensions or alignment are not scientific approval. The Stage 4 review (AOI, footprint, masks, QA reports) has not been completed in this repository. José makes the final decision."
+  "pairsNote": "All pairs are PENDING. Identical grids or alignment are not scientific approval. QA, footprint and AOI evidence exists locally but has not been reviewed. José makes the final decision.",
+  "phaseNote": "Phase C (interface) reported complete by José on 2026-11-15; Phase D (scientific acceptance) is pending. Public rendering is not scientific approval.",
+  "stage4Evidence": {
+    "status": "located locally by José; NOT yet reviewed",
+    "localDirectory": "SAR-Change-Detection/sar_demo_outputs/stage_4_readiness_evidence/",
+    "contents": [
+      "3 QA reports (PDF)",
+      "3 QA statistics (HDF5)",
+      "3 QA summaries (CSV)",
+      "3 CMR spatial-extent GeoJSON",
+      "3 acquisition-footprint KML",
+      "AOI candidate datasets (legacy PMCC 1998 subwatersheds; MiAmbiente HydroBASINS)"
+    ],
+    "note": "These files are not in this repository. Existence is reported by José; contents have not been inspected by Maryfer."
+  }
 }

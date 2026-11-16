@@ -1,22 +1,31 @@
-# Known defects and pending work
+# Known defects and unfinished functions (handover)
 
-*Updated 2026-11-15 for the Phase C release.*
+*Maryfer Higuera · updated 2026-11-15 · Phase C (interface) reported complete by José; Phase D (scientific acceptance) in progress.*
 
-## Not finished / pending
-- Raw CMR UMM-G records and catalogue URLs (fields marked `PENDING` in `scenes.json`), including the collection and product maturity of each scene.
-- Stage 4 readiness review: all three pairs are PENDING; no approval has been given (see `STAGE4_READINESS.md`).
-- Approved AOI / official footprint: none. No watershed polygon is drawn; the dashed rectangle is a provisional raster extent.
-- Visual verification of the three PNGs against the basemap on the live site (`rasterPreviewVisuallyVerified` stays `false` until done).
-- Source zero/negative-value inspection of the Stage 2 rasters, and the Stage 2 versus `real_gcov_geotiff` pixel comparison (see `DATA_PROVENANCE.md`, section 7).
-- Testing on real phones and tablets: automated viewport tests are not a substitute.
-- Swipe comparison (optional) is not implemented; the comparison uses crossfade.
+## Resolved (reported by José)
+- Preview averaging order: linear power before dB (confirmed); no non-positive source values.
+- October 14 GeoTIFF path question: the two exports are pixel-identical.
+- Public site checked on desktop and mobile; all three previews load and match their metadata.
 
-## Items to keep in mind when handling the evidence files
-- The metadata `.txt` and validation `.json` files kept outside the repository contain personal local file-system paths. Remove or rewrite those paths before any such file is committed or quoted publicly.
-- The three PNGs in `assets/maps/` must stay identical to the ones listed in `preview_metadata.json` (sizes 1,598,989 / 1,758,399 / 1,784,029 bytes).
+## Pending scientific acceptance (Phase D)
+- CMR UMM-G records: lookup URLs and local evidence files exist; record-to-granule validation pending. Status stays PENDING.
+- Stage 4 evidence (QA reports, statistics, summaries, footprints, AOI candidates) located locally; not reviewed.
+- AOI: no approved geometry. The dashed rectangle is a provisional raster extent, not a watershed.
+- Equivalence of the June 16 and June 28 Stage 2 exports with their validated exports.
+- `mask` / `inputDataExceptionMask` policy and common-valid-pixel rule.
+- All three date pairs are PENDING; the comparison is visual only.
+- Product maturity of collection `NISAR_L2_GCOV_PROVISIONAL_V1` to be confirmed.
+
+## Not implemented
+- Curtain/swipe comparison (optional; crossfade is used).
+
+## Text in files owned by José that may still be out of date
+- `index.html`: hero note ("raster previews are still in progress"), the "basemap enabled" statistic, Radar Explorer description, About section about future previews.
+- `README.md` and `docs/USER_GUIDE.md`: "basemap only / no previews".
+- These need José's decision or permission before Maryfer edits them.
 
 ## Behaviour notes
-- The map and the comparison need HTTP(S) (`py -m http.server`), not `file://`.
-- If a PNG is missing, the map and the comparison show a message naming the missing file.
-- About half of every preview is transparent by design (swath shape inside the rectangular grid).
-- When the radar layer is hidden with the checkbox, changing the scene keeps it hidden until it is shown again.
+- The map needs HTTP(S), not `file://`.
+- If a PNG is missing, the map shows a message with the missing file name.
+- About half of each preview is transparent by design (swath shape inside the rectangular grid).
+- The local metadata/validation reports contain local Windows paths; decide before publishing them.

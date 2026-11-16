@@ -8,13 +8,9 @@
 |---|---|
 | HDF5 metadata inspection of the three GCOV granules (grid, CRS, datasets, units) | Done |
 | Frequency A HHHH GeoTIFF export (linear gamma-zero power, NaN as NoData) | Done (reported; validation report seen for 2026-10-14) |
-| Display PNG previews (dB, grayscale, shared stretch, EPSG:3857) | Generated (reported in `preview_metadata.json`); counts and sizes match the PNGs in `assets/maps/` |
-| Averaging of linear power before the dB conversion | Confirmed by the project owner's inspection of the preview-generation script (the script is not stored in this repository) |
-| Effect of zero/negative **source** values on averaged pixels | **Not investigated** — a window-based inspection of the Stage 2 rasters is pending |
-| Equivalence of the Stage 2 GeoTIFFs and the separately georeferenced `real_gcov_geotiff` export (October 14) | **Not demonstrated** |
-| CMR verification of each granule (collection, product maturity) | **Pending** |
-| GCOV `mask` / `inputDataExceptionMask` interpretation | **Not done** — masks were not applied to the previews |
-| Study-area (AOI) approval and official footprint check | **Not done** |
+| Display PNG previews (dB, grayscale, shared stretch, EPSG:3857) | Generated, displayed on the public site and checked visually (reported by José). Not scientifically approved |
+| GCOV `mask` / `inputDataExceptionMask` interpretation | **Not done** — masks were not applied to the previews. QA evidence now exists locally but is not reviewed |
+| Study-area (AOI) approval and official footprint check | **Not done** — AOI candidates and CMR footprint files exist locally; none reviewed or approved |
 | Two-date difference in dB, valid-pixel statistics | **Not done** |
 | Any flooding or environmental interpretation | **Not done and not claimed** |
 
@@ -48,7 +44,7 @@ Backscatter power spans several orders of magnitude (HHHH values in these files 
 
 `γ⁰_dB = 10 · log10(γ⁰_linear)`
 
-The factor is **10 because these are power values**. The factor 20 is for amplitude and must not be used. Values ≤ 0 or NaN have no dB value; in the previews, resampled values that are NoData, non-finite or non-positive are shown transparent.
+The factor is **10 because these are power values**. The factor 20 is for amplitude and must not be used. Values ≤ 0 or NaN have no dB value and are shown transparent.
 
 ## 8. How is the two-date difference calculated?
 
@@ -60,7 +56,7 @@ computed only on pixels that are valid in both dates. **No difference has been c
 
 ## 9. How does valid-pixel masking work?
 
-*Done in the previews:* after resampling, destination pixels that are NaN (NoData), non-finite, or ≤ 0 are made transparent. About half of each preview is transparent because the raster grid contains empty corners around the imaged swath. This is a filter on the **resampled** values; it must not be read as saying that every non-positive **source** pixel was masked before the averaging. Whether non-positive source values exist and could influence neighbouring averaged pixels is still to be inspected (see section 12).
+*Done in the previews:* pixels that are NaN (NoData), non-finite, or ≤ 0 are made transparent. About half of each preview is transparent because the raster grid contains empty corners around the imaged swath.
 
 *Not done:* the product's `mask` and `inputDataExceptionMask` layers were **not applied** because their interpretation policy has not been approved. A future "common-valid" mask would keep only pixels valid in both dates after that policy is approved.
 
@@ -68,35 +64,8 @@ computed only on pixels that are valid in both dates. **No difference has been c
 
 Backscatter changes can come from soil or vegetation moisture, vegetation growth or loss, surface roughness (wind, tillage, harvest), differences in acquisition geometry or orbit quality, processing differences, and speckle noise — in addition to flooding. A change in radar brightness is a **hypothesis generator**. A flood or water-level claim would need independent evidence (e.g. in-situ or gauge records, optical imagery, validated classification).
 
-## 11. Orbit-and-pointing fidelity, CRID and product maturity
-
-- Granule names end `..._<CRID>_<A>_<C>_<LOC>_<counter>`. Following the ASF documentation of the NISAR file-naming convention, the first of those tokens is the **fidelity of the orbit ephemeris and radar pointing** (`F` = Forecast, `N` = Near Real-Time), the second is the **frame coverage** (`F` = Full) and the third is the processing location (`J` = JPL). Confirm against the JPL product specification (D-102274).
-- **Orbit and pointing fidelity: Forecast** for 2026-06-16 (token `F`). **Orbit and pointing fidelity: Near Real-Time** for 2026-06-28 and 2026-10-14 (token `N`). The following `F` token in all three names is frame coverage (Full), not fidelity.
-- `P05023` is the **CRID (Composite Release ID)**. ASF documents P05023 as the CRID of its PROVISIONAL NISAR products.
-- PROVISIONAL products are described by ASF/NASA as calibrated and partially validated, intended for data exploration and process studies; quality may not be optimal and validated reprocessing may supersede them.
-- The October 14 record has been associated with the collection `NISAR_L2_GCOV_PROVISIONAL_V1` (`C2854338529-ASF`); this association awaits official CMR verification. The June 16 acquisition predates the stated 2026-06-17 start of the PROVISIONAL collection, so **no collection maturity is assigned to June 16 or June 28** until their official granule/CMR records are checked.
-
-What this supports:
-
-| Use | Status |
-|---|---|
-| Exploratory visual inspection | Appropriate, with the product maturity disclosed |
-| Reproducible preliminary research | Possible if CRID, collection, versions and caveats are recorded |
-| Scientifically approved quantitative analysis | Not yet: AOI, footprints, masks, QA evidence and CMR verification are open |
-| Operational or authoritative environmental conclusions | Not supported |
-
-## 12. Open checks on the preview processing
-
-1. **Source zero/negative values.** A memory-efficient, window-by-window inspection of each Stage 2 HHHH raster should count NaN, zero, negative, infinite and positive cells and the minimum positive value. If zeros are stored as numbers rather than NaN, an average over a block that includes them lowers the mean. The result must be recorded here before the previews are described as free of this effect.
-2. **Stage 2 versus `real_gcov_geotiff` (October 14).** Matching dimensions and CRS are not equivalence. A window-by-window, NaN-aware comparison of dimensions, CRS, affine transform, dtype, NoData and pixel values is needed. No validation report exists for the June exports.
-3. Visual check of each PNG against the basemap.
-
 ## Display products (how the previews were made)
 
-1. Read the Stage 2 Frequency A HHHH GeoTIFF: gamma-zero **linear power**.
-2. Reproject to EPSG:3857 and **average-resample the linear power values** to 1800 × 1773 px.
-3. Convert the positive resampled values to dB: `10 · log10(power)`.
-4. Apply one grayscale stretch between **−25.94 dB and −4.44 dB** (2nd–98th percentile of all finite positive cells of the three downsampled previews), shared by all scenes.
-5. Export a PNG with transparency for NoData, non-finite and non-positive resampled values. Product QA masks are **not** applied.
+Source: Frequency A HHHH GeoTIFF of each granule → `10·log10` → reprojection and block-average downsampling to EPSG:3857, 1800 × 1773 px → grayscale stretch between **−25.94 dB and −4.44 dB** (2nd–98th percentile of all finite positive cells of the three downsampled previews, shared by all scenes) → PNG with transparency. Previews are **display products and not substitutes for the original measurements.**
 
-The order in steps 2–3 (average in linear power, then convert to dB) was confirmed by the project owner's inspection of `generate_istmosar_hhhh_previews.py`. `preview_metadata.json` records "average" and the dB transform but not their order, so this confirmation rests on the script, which is not part of this repository. Previews are **display products and not substitutes for the original measurements.**
+*Confirmed (reported by José, 2026-11-15):* the averaging was done on **linear power before** the dB conversion. The actual order was: read the Stage 2 HHHH GeoTIFF (linear gamma-zero) → reproject and average-resample the linear values → convert positive values with `10·log10` → apply the shared stretch → export transparent PNGs. A check of the three Stage 2 rasters found 0 zero, 0 negative and 0 infinite source values (remaining values are positive finite or NaN), so averaging is not biased by non-positive cells (`stage2_nonpositive_report.json`, held by José).
