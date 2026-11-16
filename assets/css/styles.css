@@ -73,3 +73,163 @@
     line-height: 1.5;
 }.map-fit-control a.map-fit-button{display:flex;align-items:center;justify-content:center;width:30px;height:30px;color:#0e2434!important;cursor:pointer}.map-fit-control a.map-fit-button svg{display:block}
 .legend-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.legend-head strong{margin-bottom:0}.legend-toggle{flex:none;width:22px;height:22px;padding:0;display:grid;place-items:center;background:rgba(15,34,52,.9);color:var(--text);border:1px solid rgba(176,205,225,.35);border-radius:2px;font:14px/1 var(--mono);cursor:pointer}.legend-toggle:hover,.legend-toggle:focus-visible{border-color:var(--cyan);color:var(--cyan)}.legend-body{margin-top:8px}.map-legend.collapsed .legend-body{display:none}.legend-more summary{cursor:pointer;color:#9db0bf;margin-top:6px}.legend-more summary:hover{color:var(--cyan)}
+/* ===== Typography, hierarchy & spacing pass =====
+   Appended last on purpose: it overrides earlier rules at equal specificity,
+   so it carries its own media queries. Sizes are in px.
+   Scale: lede 20 / intro 16 / section text 15 / card h3 19 (compact 17) /
+   table col-head 17 / body-in-cards 12-13 / labels 11 / map notes 10-12. */
+
+/* --- header --- */
+.brand-copy strong{font-size:15px}
+.brand-copy small{font-size:9px}
+.nav-link{font-size:12px}
+
+/* --- one size for every eyebrow / card label --- */
+.eyebrow,.intro-strip .eyebrow,.scene-panel .eyebrow,.formula-band .eyebrow,.source-list .eyebrow{font-size:11px}
+.card-index{font-size:11px}
+
+/* --- hero: stronger intro, tighter vertical rhythm --- */
+h1{font-size:clamp(48px,6.6vw,84px)}
+.hero{min-height:0;padding-top:56px;padding-bottom:44px}
+.hero-lede{font-size:20px;line-height:1.7;max-width:680px}
+.hero-actions{margin-top:26px}
+.button,.text-link,.small-link{font-size:13px}
+.hero-note{font-size:12px;line-height:1.6;margin-top:20px;max-width:640px}
+.orbital-core span{font-size:11px}
+.panel-label{font-size:10px}
+.status-panel strong{font-size:13px}
+
+/* --- orbit rings scale with their container (fixed px overflowed at ~820px) --- */
+.orbit-one{width:77%;height:34%}
+.orbit-two{width:94%;height:51%}
+
+/* --- intro strip: text sits directly under its label, full column width --- */
+.intro-strip{padding:22px 0;gap:22px}
+.intro-strip>div:first-child p{font-size:16px;line-height:1.65;max-width:none}
+.strip-stat span{font-size:12px}
+
+/* --- section headings: title, then its description directly below --- */
+.content-section{padding-top:56px;padding-bottom:12px}
+.section-heading{display:block;margin-bottom:22px}
+.section-heading h2{font-size:clamp(28px,3.6vw,42px)}
+.section-description{max-width:760px;font-size:15px;line-height:1.7;margin:12px 0 0}
+
+/* --- explorer: map fills the column so no dead space sits under it --- */
+.map-frame{display:flex;flex-direction:column}
+#map{flex:1 1 auto;height:auto;min-height:435px}
+
+/* --- explorer / map text --- */
+.map-topline{font-size:11px}
+.map-tag{font-size:10px}
+.map-foot{font-size:10px}
+.map-loading{font-size:14px}
+.field-label{font-size:12px}
+.layer-controls{margin-top:18px}
+.scene-select{font-size:13px}
+.scene-date{font-size:27px}
+.meta-cell span{font-size:10px}
+.meta-cell strong{font-size:13px}
+.notice strong,.notice p{font-size:12px}
+.compare-check{font-size:13px}
+.leaflet-control-attribution{font-size:10px!important}
+
+/* --- change explorer cards --- */
+.change-section{padding-bottom:12px}
+.change-card{min-height:0;padding:22px 26px}
+.change-card h3{font-size:19px}
+.change-card p{font-size:13px}
+.pill{font-size:10px}
+.check-list li{font-size:13px}
+.check-mark{font-size:11px}
+
+/* --- science & methodology --- */
+.science-item{min-height:0;padding:20px}
+.science-number{font-size:11px}
+.science-item h3{font-size:17px;margin:20px 0 10px}
+.science-item p{font-size:12px;line-height:1.7}
+.formula-band h3{font-size:19px}
+.formula-band p{font-size:12px}
+.method-caveat{font-size:13px;line-height:1.65}
+
+/* --- method cards (these classes had no styles before) --- */
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.method-card{border:1px solid var(--line);background:var(--panel);padding:22px 26px;min-width:0}
+.method-card .card-index{display:block;margin-bottom:6px}
+.method-card h3{font-size:19px;margin:0 0 12px}
+.method-card p{font-size:13px;color:var(--muted);line-height:1.65;margin:0 0 12px}
+.method-steps{margin:0 0 14px;padding-left:20px}
+.method-steps li{font-size:13px;color:#c5d1d9;line-height:1.6;margin-bottom:6px}
+.method-card .method-small{font-size:12px;color:#a2b3c0;margin:0}
+
+/* --- comparison table (also unstyled before): white, larger headers --- */
+.compare-table-wrap{margin-top:16px;border:1px solid var(--line);background:var(--panel);overflow-x:auto}
+.compare-table{width:100%;border-collapse:collapse}
+.compare-table caption{caption-side:top;text-align:left;padding:14px 20px 10px}
+.compare-table th,.compare-table td{text-align:left;vertical-align:top;padding:12px 20px;border-top:1px solid var(--line)}
+.compare-table thead th{font-size:17px;font-weight:700;line-height:1.35;color:#fff}
+.compare-table tbody th{font-size:16px;font-weight:700;color:var(--text);width:16%}
+.compare-table td{font-size:15px;line-height:1.55;color:#c5d1d9}
+
+/* --- about & data sources --- */
+.about-section{padding-bottom:56px}
+.about-grid{gap:48px}
+.about-copy h3{font-size:17px;margin:0 0 8px}
+.about-copy p{font-size:14px;line-height:1.7;max-width:none;margin-bottom:20px}
+.source-list{padding:20px 22px}
+.source-list a{font-size:13px}
+
+/* --- map legend, banners, compare labels (text drawn on the maps) --- */
+.map-legend{max-width:270px;font-size:11px}
+.map-legend strong{font-size:12px}
+.legend-note{font-size:10px}
+.map-banner{font-size:12px}
+.compare-labels{font-size:11px}
+.compare-interval{font-size:12px}
+.compare-help{font-size:12px}
+.compare-panel{padding:20px 22px}
+.compare-controls{grid-template-columns:1.5fr 1.5fr 1fr 1fr}
+.compare-panel .scene-select{font-size:12px;padding:11px 9px}
+
+/* --- footer --- */
+.footer-inner strong{font-size:11px}
+.footer-inner p{font-size:11px}
+.footer-disclaimer{max-width:470px}
+
+@media(max-width:900px){
+  .nav-link{font-size:11px}
+  .panel-label{font-size:9px}
+  .status-panel strong{font-size:12px}
+  .science-item{padding:17px 14px}
+  .compare-table th,.compare-table td{padding:11px 14px}
+  .compare-controls{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:700px){
+  #map{min-height:340px}
+  .orbital-art{width:min(230px,100%)}
+  h1{font-size:56px}
+  .nav-link{font-size:13px}
+  .hero{padding-top:36px;padding-bottom:32px}
+  .hero-lede{font-size:17px}
+  .intro-strip>div:first-child p{font-size:15px}
+  .strip-stat span{font-size:11px}
+  .content-section{padding-top:44px}
+  .section-heading{margin-bottom:18px}
+  .section-heading h2{font-size:clamp(26px,7.4vw,32px)}
+  .about-section{padding-bottom:44px}
+  .about-grid{gap:20px}
+  .method-grid{grid-template-columns:1fr}
+  .method-card,.change-card{padding:20px}
+  .map-legend{max-width:200px;font-size:10px}
+  .map-legend strong{font-size:11px}
+  .compare-panel{padding:16px}
+  .compare-controls{grid-template-columns:1fr}
+  .compare-table th,.compare-table td{padding:10px 10px}
+  .compare-table thead th{font-size:16px}
+  .compare-table tbody th{font-size:15px;width:auto}
+  .compare-table td{font-size:14px}
+}
+
+@media(max-width:390px){
+  .science-item h3{margin-top:14px}
+}

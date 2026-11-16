@@ -59,6 +59,10 @@
 
     mapElement.dataset.mapReady = "true";
     window.istmosarMap = map;
+    // The map column now stretches to the height of the scene panel, so redraw whenever its size changes.
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(function () { map.invalidateSize(); }).observe(mapElement);
+    }
 
     // ---- in-map message banner (errors / notices) ----
     var banner = document.createElement("div");
