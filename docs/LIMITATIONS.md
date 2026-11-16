@@ -1,43 +1,54 @@
-# Limitations and Known Pending Work
+# Limitations and Pending Scientific Work
 
-*Last updated: 2026-11-15.*
+*Last updated: 2026-11-16.*
 
-## What the website shows
+## What the website publishes
 
-Three single-date Frequency A HHHH backscatter previews (June 16, June 28 and October 14, 2026) displayed in dB on a shared grayscale scale, plus a visual two-date overlay. These are exploratory display products. No change layer, change statistic or flooding estimate is published.
+The application displays three single-date Frequency A HHHH backscatter previews (June 16, June 28, and October 14, 2026), acquisition metadata, and a visual two-date overlay. The previews are exploratory display products. No difference raster, change statistic, flooding estimate, or environmental conclusion is published.
 
-## Interpreting NISAR GCOV backscatter
+## Data provenance and product maturity
 
-- **Surface roughness.** Rough surfaces scatter more energy back to the sensor than smooth ones. Wind-roughened water, ploughed or harvested fields, and calm water can look very different without any change in land cover.
-- **Moisture conditions.** Soil and vegetation moisture change the radar's dielectric response. A wetter surface is often brighter, so a brightness change can reflect rainfall history rather than standing water.
-- **Vegetation structure.** L-band interacts with canopy and trunks; the response depends on biomass, density, leaf state and structure. Growth, loss or phenology can change backscatter.
-- **Radar scattering mechanisms.** Surface, volume and double-bounce scattering mix in each pixel. HHHH responds to these differently than HVHV, and the same value can come from different mechanisms.
-- **Acquisition geometry.** The three scenes share relative track 040, descending direction and frame 084, which helps, but incidence angle varies across the swath and terrain can still affect the result. Geometry compatibility has not been independently audited for these previews.
-- **Orbit and pointing fidelity.** The June 16 scene has orbit and pointing fidelity **Forecast** (filename token `F`); June 28 and October 14 have **Near Real-Time** (token `N`). Differences in orbit quality can affect geolocation and radiometry. Pairs that include June 16 need extra scrutiny.
-- **Quality masks.** The GCOV `mask` and `inputDataExceptionMask` were **not applied**; QA report/statistics/summary availability and validity have not been reviewed here. Previews may include invalid or low-quality pixels.
-- **Valid-pixel limitations.** After resampling, only NaN, non-finite and non-positive values are transparent; this is not a mask of every non-positive source pixel, and the influence of such source values on averaged pixels has not yet been investigated. About half of each preview is transparent because of the shape of the imaged swath inside the rectangular grid. No common-valid mask exists between dates.
-- **Radar change is not flooding.** A difference in backscatter, even a large one, is not evidence of flooding, water-level change or deforestation without independent supporting evidence. Any such inference must be labelled as a hypothesis.
+- The raw CMR UMM-G records for the three selected granules were parsed. Their granule concept IDs and `GranuleUR` values match the corresponding project granule records.
+- Each record identifies `NISAR_L2_GCOV_PROVISIONAL_V1`, Version 1. The exported CMR spatial-footprint GeoJSON for each scene matches its UMM-G spatial boundary.
+- These checks establish catalogue provenance and footprint-record consistency; they do not approve an AOI or a date pair.
+- The June 16 granule begins at `2026-06-16T23:44:48Z`, close to the general June 17, 2026 Provisional-collection start date in ASF guidance. Its collection association is documented from its individual UMM-G record; do not infer collection membership from the filename token alone.
+- The `P05023` release token is a product release identifier, not proof that a granule has passed all project-specific QA checks.
+- Do not propagate a collection concept ID from one granule to another without verifying the corresponding raw record.
 
-## Product and metadata maturity
+## GCOV quality and source-value limitations
 
-- `P05023` is the CRID (Composite Release ID). ASF documents it as the CRID of its PROVISIONAL products, which are calibrated and partially validated and may be superseded by validated reprocessing. Quality may not be optimal.
-- The October 14 record is associated with `NISAR_L2_GCOV_PROVISIONAL_V1`; that association awaits official CMR verification. The June 16 acquisition predates the stated 2026-06-17 start of the PROVISIONAL collection, and the collection of the June scenes is not confirmed. No scene is described as scientifically validated.
-- Full CMR UMM-G records for all three granules are **pending raw JSON verification**. The CMR concept IDs are "previously associated" identifiers.
-- Acquisition mode `4005`, track, direction and the fidelity tokens were read from the granule filenames and project records, not from HDF5 attributes.
-- Pixel equivalence between the Stage 2 GeoTIFFs used for the previews and the separately georeferenced October 14 export has not been demonstrated.
+- The GCOV `mask` semantics were reviewed against the NISAR L2 GCOV Product Specification, Revision F. Full-scene distributions of `mask`, `inputDataExceptionMask`, and `numberOfLooks` were inspected.
+- `mask` and `inputDataExceptionMask` are separate quality-related layers with different meanings. Neither is applied to the public previews.
+- No approved mask policy, QA policy, exception policy, or minimum `numberOfLooks` threshold exists.
+- Nine candidate upstream QA sidecars previously inspected (three QA_REPORT, three QA_STATS, and three QA_SUMMARY) contained HTML responses, not valid PDF, HDF5, or CSV content. They are not valid producer QA evidence.
+- ASF sidecar enumeration/recovery has not been executed in the latest reported attempt, so the availability of valid upstream sidecars remains unknown.
+- The local `nisarqa` workflow has not been run.
+- Full-scene scans of the three Stage 2 HHHH rasters found zero finite zero values, zero finite negative values, and zero positive/negative infinities. NaN/NoData samples remain. The influence of source NaN/NoData samples on average-resampled preview pixels has not been independently quantified.
+
+## Acquisition and comparison limitations
+
+- June 16 has Forecast orbit/pointing fidelity; June 28 and October 14 have Near Real-Time fidelity. Pairs including June 16 require additional scrutiny.
+- The intervals are 12 days, 108 days, and 120 days. Longer temporal separation does not establish a specific event.
+- Matching grid dimensions, CRS, track, frame, and direction do not by themselves prove radiometric or scientific compatibility.
+- No pair has been approved. All three pair statuses remain `PENDING`.
+- The earlier 528,206,772-pixel common-core result applies to the full shared grid, not an approved AOI or approved QA policy. It is diagnostic only.
+- The October 14 Stage 2 HHHH export was reported pixel-identical to the separate `real_gcov_geotiff` export over 1,115,964,864 pixels. This equivalence has not been established for June 16 or June 28.
 
 ## Display limitations
 
-- Previews are downsampled (1800 × 1773 px, roughly 190 m per pixel in Web Mercator units) from 10 m data and stretched to 8-bit grayscale. Fine detail and the full dynamic range are not preserved.
-- The stretch (−25.94 to −4.44 dB) is shared by all scenes but is a visual choice, not a physical threshold.
-- Image bounds are the envelope of the projected raster grid, **not** an official acquisition footprint.
+- Previews are downsampled from 10 m source data to 1800 × 1773 pixels (roughly 190 m per pixel) in Web Mercator and stretched to 8-bit grayscale. Fine detail and the full dynamic range are not preserved.
+- The shared stretch (approximately −25.94 to −4.44 dB) is a visualization choice, not a physical threshold.
+- The preview workflow average-resamples linear power before dB conversion. No product QA mask is applied.
+- The image bounds are the envelope of the projected raster grid, not an official acquisition footprint.
+- The preview transparency pattern does not constitute an approved common-valid-pixel mask.
 
-## Study area
+## Study-area limitations
 
-- No approved Chagres–Gatún boundary exists in the repository. The dashed rectangle on the map is a **provisional raster viewing extent**, not a watershed, administrative or study-area boundary.
-- Pair approvals (June 16–28, June 28–Oct 14, June 16–Oct 14) are all PENDING. Identical grids and alignment are not scientific approval.
+- No authoritative Chagres–Gatún boundary has been selected and approved.
+- The MiAmbiente candidate area figures in the diagnostic map and the reported union area have not yet been reconciled from source features, filters, geometry operations, CRS, and area calculations.
+- The PMCC 1998 candidate contains five invalid source geometries. A repaired derivative, if produced, must be documented separately from the original source geometries.
+- The dashed rectangle on the website is a provisional raster viewing extent, not a watershed, administrative boundary, acquisition footprint, or approved study area.
 
-## Technical
+## Environmental interpretation
 
-- The site needs external services (Leaflet, OpenStreetMap tiles, Google Fonts). The basemap may not load offline. The three PNG previews (about 5 MB in total) are loaded from the site itself.
-- The map works only over HTTP(S); open it with a local server, not by double-clicking `index.html`.
+A backscatter difference, even a large one, is not proof of flooding, water-level change, inundation, or deforestation without independent supporting evidence. Radar response also depends on moisture, surface roughness, vegetation structure, geometry, orbit quality, processing, and speckle. The application is an observation and visual-exploration tool, not an event-attribution system.

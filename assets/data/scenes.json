@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "status": "exploratory-previews-pending-scientific-approval",
-  "lastUpdated": "2026-11-15",
+  "lastUpdated": "2026-11-16",
   "maintainer": "Maryfer Higuera (Scientific Data Lead)",
   "scopeNote": "Single-acquisition HHHH backscatter previews only. No change detection, difference map, change statistics or environmental conclusion has been calculated or approved.",
   "stateDefinitions": {
@@ -89,13 +89,16 @@
       },
       "cmr": {
         "granuleConceptId": "G4250187623-ASF",
-        "granuleConceptIdStatus": "Previously associated concept ID; NOT confirmed against the raw UMM-G record.",
-        "ummG": "PENDING RAW JSON VERIFICATION",
+        "granuleConceptIdStatus": "VERIFIED against the raw CMR UMM-G record: concept ID and GranuleUR match this scene's granule record.",
+        "ummG": "VERIFIED — raw UMM-G record retrieved, parsed, and matched to the local granule record.",
         "collectionConceptId": null,
-        "collectionShortName": null,
-        "collectionStatus": "PENDING",
+        "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+        "collectionStatus": "VERIFIED from the corresponding raw UMM-G record: collection short name NISAR_L2_GCOV_PROVISIONAL_V1, Version 1.",
         "lookupUrl": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4250187623-ASF",
-        "localEvidence": "Exact-search JSON and concept-ID JSON located locally by José (stage_4_readiness_evidence). Content and record-to-granule match not yet validated."
+        "localEvidence": "Raw UMM-G record, exact-search export, and corresponding CMR spatial-footprint GeoJSON are retained in the local Phase D evidence package; these large audit files are not published in this repository.",
+        "collectionVersion": "1",
+        "collectionConceptIdNote": "Not populated in this public manifest. Do not infer a collection concept ID from another granule; populate only after checking the corresponding raw UMM-G/collection reference.",
+        "spatialFootprintStatus": "VERIFIED: exported CMR spatial-footprint GeoJSON matches the corresponding UMM-G spatial boundary. This is not AOI approval."
       },
       "productDetails": {
         "level": "L2",
@@ -131,7 +134,7 @@
       "catalogReference": {
         "catalog": "NASA CMR / ASF DAAC",
         "url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4250187623-ASF",
-        "status": "lookup endpoint only; returned record not yet validated"
+        "status": "Raw UMM-G record parsed; granule concept ID and GranuleUR matched; collection short name/version matched; exported CMR spatial footprint checked against UMM-G boundary. Not an AOI or pair approval."
       },
       "preview": {
         "path": "assets/maps/june16_preview.png",
@@ -164,13 +167,13 @@
       },
       "verification": {
         "metadataVerified": true,
-        "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
+        "metadataVerifiedScope": "HDF5 grid/CRS/dataset inspection plus raw CMR UMM-G granule-record linkage. Does not constitute AOI approval or scientific approval for comparison.",
         "rasterExported": true,
         "rasterPreviewGenerated": true,
         "rasterPreviewVisuallyVerified": true,
         "approvedForComparison": false,
         "rasterPreviewVisuallyVerifiedBy": "José Peñalba (public site, desktop and mobile); June 16 also by Maryfer locally",
-        "sourceNonPositiveCheck": "Passed: 0 zero, 0 negative, 0 infinite source values (inspect_stage2_nonpositive.py, reported by José)"
+        "sourceNonPositiveCheck": "Full-scene Stage 2 HHHH scan: 0 finite zero values, 0 finite negative values, and 0 positive/negative infinities; NaN/NoData samples remain. This does not establish how source NaN/NoData samples influence average-resampled preview pixels or constitute QA acceptance."
       },
       "footprintApprovedForStudyArea": false,
       "scientificApproval": "pending",
@@ -203,13 +206,16 @@
       },
       "cmr": {
         "granuleConceptId": "G4240958164-ASF",
-        "granuleConceptIdStatus": "Previously associated concept ID; NOT confirmed against the raw UMM-G record.",
-        "ummG": "PENDING RAW JSON VERIFICATION",
+        "granuleConceptIdStatus": "VERIFIED against the raw CMR UMM-G record: concept ID and GranuleUR match this scene's granule record.",
+        "ummG": "VERIFIED — raw UMM-G record retrieved, parsed, and matched to the local granule record.",
         "collectionConceptId": null,
-        "collectionShortName": null,
-        "collectionStatus": "PENDING",
+        "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+        "collectionStatus": "VERIFIED from the corresponding raw UMM-G record: collection short name NISAR_L2_GCOV_PROVISIONAL_V1, Version 1.",
         "lookupUrl": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4240958164-ASF",
-        "localEvidence": "Exact-search JSON and concept-ID JSON located locally by José (stage_4_readiness_evidence). Content and record-to-granule match not yet validated."
+        "localEvidence": "Raw UMM-G record, exact-search export, and corresponding CMR spatial-footprint GeoJSON are retained in the local Phase D evidence package; these large audit files are not published in this repository.",
+        "collectionVersion": "1",
+        "collectionConceptIdNote": "Not populated in this public manifest. Do not infer a collection concept ID from another granule; populate only after checking the corresponding raw UMM-G/collection reference.",
+        "spatialFootprintStatus": "VERIFIED: exported CMR spatial-footprint GeoJSON matches the corresponding UMM-G spatial boundary. This is not AOI approval."
       },
       "productDetails": {
         "level": "L2",
@@ -245,7 +251,7 @@
       "catalogReference": {
         "catalog": "NASA CMR / ASF DAAC",
         "url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4240958164-ASF",
-        "status": "lookup endpoint only; returned record not yet validated"
+        "status": "Raw UMM-G record parsed; granule concept ID and GranuleUR matched; collection short name/version matched; exported CMR spatial footprint checked against UMM-G boundary. Not an AOI or pair approval."
       },
       "preview": {
         "path": "assets/maps/june28_preview.png",
@@ -278,13 +284,13 @@
       },
       "verification": {
         "metadataVerified": true,
-        "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
+        "metadataVerifiedScope": "HDF5 grid/CRS/dataset inspection plus raw CMR UMM-G granule-record linkage. Does not constitute AOI approval or scientific approval for comparison.",
         "rasterExported": true,
         "rasterPreviewGenerated": true,
         "rasterPreviewVisuallyVerified": true,
         "approvedForComparison": false,
         "rasterPreviewVisuallyVerifiedBy": "José Peñalba (public site, desktop and mobile); June 16 also by Maryfer locally",
-        "sourceNonPositiveCheck": "Passed: 0 zero, 0 negative, 0 infinite source values (inspect_stage2_nonpositive.py, reported by José)"
+        "sourceNonPositiveCheck": "Full-scene Stage 2 HHHH scan: 0 finite zero values, 0 finite negative values, and 0 positive/negative infinities; NaN/NoData samples remain. This does not establish how source NaN/NoData samples influence average-resampled preview pixels or constitute QA acceptance."
       },
       "footprintApprovedForStudyArea": false,
       "scientificApproval": "pending",
@@ -317,13 +323,16 @@
       },
       "cmr": {
         "granuleConceptId": "G4371433684-ASF",
-        "granuleConceptIdStatus": "Previously associated concept ID; NOT confirmed against the raw UMM-G record.",
-        "ummG": "PENDING RAW JSON VERIFICATION",
-        "collectionConceptId": "C2854338529-ASF",
+        "granuleConceptIdStatus": "VERIFIED against the raw CMR UMM-G record: concept ID and GranuleUR match this scene's granule record.",
+        "ummG": "VERIFIED — raw UMM-G record retrieved, parsed, and matched to the local granule record.",
+        "collectionConceptId": null,
         "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
-        "collectionStatus": "From an earlier extracted CMR summary (reported by José); raw record not yet inspected.",
+        "collectionStatus": "VERIFIED from the corresponding raw UMM-G record: collection short name NISAR_L2_GCOV_PROVISIONAL_V1, Version 1.",
         "lookupUrl": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4371433684-ASF",
-        "localEvidence": "Exact-search JSON and concept-ID JSON located locally by José (stage_4_readiness_evidence). Content and record-to-granule match not yet validated."
+        "localEvidence": "Raw UMM-G record, exact-search export, and corresponding CMR spatial-footprint GeoJSON are retained in the local Phase D evidence package; these large audit files are not published in this repository.",
+        "collectionVersion": "1",
+        "collectionConceptIdNote": "Not populated in this public manifest. Do not infer a collection concept ID from another granule; populate only after checking the corresponding raw UMM-G/collection reference.",
+        "spatialFootprintStatus": "VERIFIED: exported CMR spatial-footprint GeoJSON matches the corresponding UMM-G spatial boundary. This is not AOI approval."
       },
       "productDetails": {
         "level": "L2",
@@ -359,7 +368,7 @@
       "catalogReference": {
         "catalog": "NASA CMR / ASF DAAC",
         "url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=G4371433684-ASF",
-        "status": "lookup endpoint only; returned record not yet validated"
+        "status": "Raw UMM-G record parsed; granule concept ID and GranuleUR matched; collection short name/version matched; exported CMR spatial footprint checked against UMM-G boundary. Not an AOI or pair approval."
       },
       "preview": {
         "path": "assets/maps/october14_preview.png",
@@ -392,13 +401,13 @@
       },
       "verification": {
         "metadataVerified": true,
-        "metadataVerifiedScope": "HDF5 grid / CRS / dataset inspection. CMR UMM-G pending.",
+        "metadataVerifiedScope": "HDF5 grid/CRS/dataset inspection plus raw CMR UMM-G granule-record linkage. Does not constitute AOI approval or scientific approval for comparison.",
         "rasterExported": true,
         "rasterPreviewGenerated": true,
         "rasterPreviewVisuallyVerified": true,
         "approvedForComparison": false,
         "rasterPreviewVisuallyVerifiedBy": "José Peñalba (public site, desktop and mobile); June 16 also by Maryfer locally",
-        "sourceNonPositiveCheck": "Passed: 0 zero, 0 negative, 0 infinite source values (inspect_stage2_nonpositive.py, reported by José)",
+        "sourceNonPositiveCheck": "Full-scene Stage 2 HHHH scan: 0 finite zero values, 0 finite negative values, and 0 positive/negative infinities; NaN/NoData samples remain. This does not establish how source NaN/NoData samples influence average-resampled preview pixels or constitute QA acceptance.",
         "rasterEquivalence": "Stage 2 HHHH GeoTIFF is EQUIVALENT to the separate real_gcov_geotiff export: identical grid metadata and NaN-aware exact equality over 1,115,964,864 pixels (reported by José). Not established for June scenes."
       },
       "footprintApprovedForStudyArea": false,
@@ -441,19 +450,25 @@
       ]
     }
   ],
-  "pairsNote": "All pairs are PENDING. Identical grids or alignment are not scientific approval. QA, footprint and AOI evidence exists locally but has not been reviewed. José makes the final decision.",
-  "phaseNote": "Phase C (interface) reported complete by José on 2026-11-15; Phase D (scientific acceptance) is pending. Public rendering is not scientific approval.",
+  "pairsNote": "All three pairs remain PENDING. CMR UMM-G granule records and per-scene footprint-record consistency have been verified, but this does not approve the AOI or pairwise comparisons. Revision F GCOV mask semantics and full-scene raster distributions have been reviewed; the candidate upstream QA sidecars previously examined were invalid HTML responses. No approved QA policy or common-valid-pixel mask exists. José makes the final scientific approval decision.",
+  "phaseNote": "Phase C interface work is reported complete. Phase D technical review is partial, but quantitative scientific acceptance remains BLOCKED. The public application is an exploratory observation and visual-comparison interface only.",
   "stage4Evidence": {
-    "status": "located locally by José; NOT yet reviewed",
+    "status": "PARTIAL REVIEW — provenance/footprint checks and GCOV raster diagnostics reviewed; scientific acceptance remains blocked.",
     "localDirectory": "SAR-Change-Detection/sar_demo_outputs/stage_4_readiness_evidence/",
     "contents": [
-      "3 QA reports (PDF)",
-      "3 QA statistics (HDF5)",
-      "3 QA summaries (CSV)",
-      "3 CMR spatial-extent GeoJSON",
-      "3 acquisition-footprint KML",
-      "AOI candidate datasets (legacy PMCC 1998 subwatersheds; MiAmbiente HydroBASINS)"
+      "3 raw CMR UMM-G granule records: parsed; concept IDs and GranuleUR values matched to local granule records",
+      "3 exported CMR spatial-footprint GeoJSON files: each checked against its corresponding UMM-G spatial boundary",
+      "AOI candidate datasets: legacy PMCC 1998 subwatersheds and MiAmbiente HydroBASINS; neither approved",
+      "3 candidate QA_REPORT sidecars: previously inspected files contained HTML responses, not valid PDF reports",
+      "3 candidate QA_STATS sidecars: previously inspected files contained HTML responses, not valid HDF5 statistics files",
+      "3 candidate QA_SUMMARY sidecars: previously inspected files contained HTML responses, not valid CSV summaries",
+      "Stage 2 HHHH, mask, inputDataExceptionMask, and numberOfLooks full-scene diagnostics"
     ],
-    "note": "These files are not in this repository. Existence is reported by José; contents have not been inspected by Maryfer."
+    "gcovSpecificationReview": "NISAR GCOV Product Specification Revision F reviewed for mask semantics. GCOV mask and inputDataExceptionMask are treated as distinct layers; no approved quality policy is established.",
+    "fullSceneRasterReview": "Full-scene distributions of mask, inputDataExceptionMask, and numberOfLooks were inspected. The three Stage 2 HHHH scans found no finite zero/negative values and no positive/negative infinities; NaN/NoData samples remain. No numberOfLooks threshold has been invented or approved.",
+    "qaSidecarValidation": "The nine previously inspected candidate sidecars were HTML responses and failed their expected PDF/HDF5/CSV file-signature checks. They are not valid upstream QA evidence.",
+    "asfSidecarRecovery": "NOT EXECUTED in the latest reported attempt. Availability of QA sidecars for these granules remains unknown.",
+    "nisarqaExecution": "NOT RUN locally. A documentation/API compatibility review is not an executed QA run.",
+    "approvalState": "AOI approval, QA policy approval, mask-policy approval, pair approval, and quantitative processing authorization remain false/pending. No difference raster or quantitative change statistics were generated."
   }
 }

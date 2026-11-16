@@ -1,71 +1,116 @@
 # Scientific Method — ISTMOSAR
 
-*Last updated: 2026-11-15. This document describes what has actually been done, and separately what is planned but not yet done.*
+*Last updated: 2026-11-16. This document separates completed inspections from pending scientific decisions.*
 
-## 0. Status at a glance
+## 0. Current scientific status
 
-| Step | State |
-|---|---|
-| HDF5 metadata inspection of the three GCOV granules (grid, CRS, datasets, units) | Done |
-| Frequency A HHHH GeoTIFF export (linear gamma-zero power, NaN as NoData) | Done (reported; validation report seen for 2026-10-14) |
-| Display PNG previews (dB, grayscale, shared stretch, EPSG:3857) | Generated, displayed on the public site and checked visually (reported by José). Not scientifically approved |
-| GCOV `mask` / `inputDataExceptionMask` interpretation | **Not done** — masks were not applied to the previews. QA evidence now exists locally but is not reviewed |
-| Study-area (AOI) approval and official footprint check | **Not done** — AOI candidates and CMR footprint files exist locally; none reviewed or approved |
-| Two-date difference in dB, valid-pixel statistics | **Not done** |
-| Any flooding or environmental interpretation | **Not done and not claimed** |
+| Work item | Technical state | Scientific acceptance |
+|---|---|---|
+| HDF5 metadata inspection (grid, CRS, datasets, units) | Completed for the three granules, as reported in the local audit | Does not establish comparison approval |
+| CMR UMM-G record linkage | Raw records parsed; concept IDs and `GranuleUR` values matched | Provenance check only |
+| CMR footprint consistency | Exported CMR footprint GeoJSONs matched to corresponding UMM-G spatial boundaries | Does not approve an AOI |
+| Stage 2 HHHH full-scene value scan | No finite zero/negative or infinite values found; NaN/NoData remains | Does not validate QA or NoData resampling behavior |
+| GCOV `mask` interpretation | Reviewed against Product Specification Revision F | Quality policy not approved |
+| `inputDataExceptionMask` interpretation | Kept distinct from the GCOV `mask`; distributions inspected | Exception-handling policy not approved |
+| `numberOfLooks` distribution | Inspected | No threshold selected or approved |
+| Upstream QA sidecars | Nine candidate files previously inspected were HTML, not valid PDF/HDF5/CSV | Valid producer QA evidence remains unavailable in the inspected package |
+| ASF QA-sidecar recovery | Not executed in the latest reported attempt | Availability remains unknown |
+| Local `nisarqa` | Not run | No locally generated QA report exists |
+| AOI and pairwise valid-pixel policy | Not approved | D-01/D-03 remain incomplete |
+| Difference raster/statistics | Not generated | D-05 blocked |
 
-## 1. What is NISAR?
+## 1. What NISAR measures
 
-NISAR (NASA–ISRO Synthetic Aperture Radar) is a joint Earth-observation radar mission of NASA and ISRO. It carries an L-band radar (NASA/JPL) and an S-band radar (ISRO). This project uses **L-band only**. The mission repeats its observations on a regular cycle; the cycles used here (023, 024, 033) are consistent with a 12-day repeat (12 days between cycles 023 and 024, 108 days between 024 and 033).
+NISAR is a joint NASA–ISRO Earth-observation radar mission. Synthetic aperture radar (SAR) is an active microwave technique: the instrument transmits radar pulses and records energy scattered back toward it. Backscatter is influenced by surface roughness, moisture, vegetation structure, acquisition geometry, and other factors. A SAR image is not an optical photograph.
 
-## 2. What does SAR measure?
+L-band can be useful for studying vegetation and surface-water-related radar responses, but those properties do not identify a particular pixel as water or prove inundation.
 
-SAR is an **active microwave** technique. The instrument transmits radar pulses and records the energy scattered back toward it (**backscatter**). It is not a photograph: the brightness depends on surface roughness, moisture, vegetation structure and viewing geometry. SAR works day and night and is largely independent of cloud cover.
+## 2. GCOV measurement used by this project
 
-## 3. Why is L-band relevant to surface water and vegetation?
+Level-2 GCOV (Geocoded Polarimetric Covariance) provides geocoded polarimetric covariance measurements on a map grid. The selected scenes contain Frequency A HHHH and HVHV. This application displays HHHH only.
 
-L-band has a long wavelength (about 24 cm). Compared with shorter wavelengths it penetrates vegetation canopies more deeply and is more sensitive to larger structural elements (trunks, branches) and to the ground beneath the canopy. Smooth open water typically reflects the signal away from the sensor (low backscatter), whereas inundated vegetation can sometimes return strong signal through double-bounce scattering. These are **reasons the band is useful for such studies, not evidence that any particular pixel is water or flooded forest**.
+The Stage 2 grid used by the previews is reported as `EPSG:32617`, 33,768 × 33,048 pixels, 10 m spacing, Float32, with gamma-zero linear power values. Supporting layers include `mask`, `inputDataExceptionMask`, and `numberOfLooks`.
 
-## 4. What does the GCOV product represent?
+HHHH and HVHV are distinct covariance terms and must not be treated as interchangeable measurements.
 
-Level-2 GCOV (Geocoded Polarimetric Covariance) provides terrain-corrected polarimetric covariance terms on a map grid. In the files used here the grid is `EPSG:32617` (WGS 84 / UTM zone 17N) at 10 m spacing, 33,768 × 33,048 pixels, Float32, with supporting layers (`mask`, `inputDataExceptionMask`, `numberOfLooks`, `rtcGammaToSigmaFactor`).
+## 3. GCOV quality layers — do not conflate their meanings
 
-## 5. Why Frequency A HHHH?
+The applicable NISAR L2 GCOV Product Specification, Revision F, was reviewed for the mask definitions. The project records the following interpretation for the GCOV `mask` layer:
 
-All three granules contain Frequency A with the HHHH and HVHV terms (VVVV and VHVH are not present). **HHHH was chosen as the project's initial comparison measurement** so that the same channel, frequency and convention are used on every date. HVHV is available but is not displayed. This is a project decision, not a statement that HHHH is the best channel for every question.
+- `0`: invalid or partially focused sample.
+- `1` through `5`: valid, fully focused subswath membership codes.
+- `255`: fill value outside the RSLC image bounds.
 
-## 6. What does gamma-zero mean?
+`inputDataExceptionMask` is a separate layer and does not have the same semantics as the GCOV `mask`. It is an exception/condition bitmask; it must be interpreted using its own product-specification definition and not substituted for the GCOV `mask`.
 
-Gamma-zero (γ⁰) is a radar backscatter normalization in which the received power is referenced to the area perpendicular to the radar line of sight. This reduces the dependence on local terrain slope and incidence angle compared with a ground-plane normalization. In the HDF5 files the values have unit `1` (dimensionless) and are **linear power**, not dB. The `rtcGammaToSigmaFactor` layer is not applied.
+`numberOfLooks` is a per-sample adaptive multi-looking quantity. It varies with factors such as topography and radar geometry. This project has not invented or adopted a universal minimum `numberOfLooks` threshold.
 
-## 7. Why convert power with 10·log10?
+The full-scene distributions of `mask`, `inputDataExceptionMask`, and `numberOfLooks` were inspected in the local audit. These inspections do not constitute an approved QA policy. Neither quality layer is applied to the published previews.
 
-Backscatter power spans several orders of magnitude (HHHH values in these files range from about 10⁻⁸ to 10⁴). Decibels compress this range:
+Controlling reference: [NISAR L2 GCOV Product Specification, Revision F](https://cumulus.asf.earthdatacloud.nasa.gov/PUBLIC/DATA/NISAR/NISAR_D-102274_RevF_NASA_SDS_Product_Specification_L2_GCOV_w-esigs.pdf).
+
+## 4. Upstream QA status
+
+Nine candidate upstream QA sidecars were previously inspected: three QA_REPORT, three QA_STATS, and three QA_SUMMARY files. The inspected files contained HTML responses rather than valid PDF, HDF5, or CSV content and failed expected file-signature checks. They cannot support granule-level QA acceptance.
+
+The latest Claude-assisted ASF recovery attempt did not execute an ASF search or download. Therefore, the count of valid QA sidecars retrieved by that attempt is zero, but this is **not evidence that ASF has no such files**. Sidecar availability for these granules remains unknown until a real authenticated inventory/search is completed.
+
+The local `nisarqa` workflow has not been executed. A code/documentation review is not an executed QA run, and locally generated QA would be separate evidence from original producer QA.
+
+## 5. Preview generation
+
+The published previews are display products generated from the Stage 2 Frequency A HHHH GeoTIFFs:
+
+1. Read gamma-zero linear power.
+2. Reproject and average-resample linear power to the display grid (EPSG:3857, 1800 × 1773 pixels).
+3. Convert positive destination values to dB using `10·log10(power)`.
+4. Apply a shared grayscale stretch of approximately −25.94 to −4.44 dB.
+5. Export transparent PNGs.
+
+The averaging is performed before the dB conversion. The product quality masks are not applied. The previews are approximately 190 m per pixel and are not substitutes for the 10 m source rasters.
+
+A full-scene scan of the three Stage 2 HHHH rasters found zero finite zero values, zero finite negative values, and zero positive/negative infinities. NaN/NoData samples remain. Their treatment and spatial influence during average resampling have not been independently quantified.
+
+## 6. Decibels
+
+The displayed power conversion is:
 
 `γ⁰_dB = 10 · log10(γ⁰_linear)`
 
-The factor is **10 because these are power values**. The factor 20 is for amplitude and must not be used. Values ≤ 0 or NaN have no dB value and are shown transparent.
+The factor is 10 because the input is power, not amplitude. Values that are not positive finite values do not have a valid logarithmic dB representation and are displayed transparently according to the preview workflow.
 
-## 8. How is the two-date difference calculated?
+## 7. Common-valid pixels — not yet approved
 
-**Planned, not yet performed.** Once a pair is scientifically approved, the difference would be
+A future comparison policy must define the valid mask for each acquisition and the intersection used for each date pair. Conceptually:
 
-`Δ_dB = 10·log10(P_later) − 10·log10(P_earlier) = 10·log10(P_later / P_earlier)`
+`V_i = F_i ∩ Q_i ∩ P_i`
 
-computed only on pixels that are valid in both dates. **No difference has been calculated or published.** The website's "Change Explorer" overlays two single-date previews and lets the user crossfade between them; this is a visual comparison only.
+where `F_i` is the official scene footprint, `Q_i` is the approved quality policy, and `P_i` is the finite-positive HHHH power condition.
 
-## 9. How does valid-pixel masking work?
+For a pair:
 
-*Done in the previews:* pixels that are NaN (NoData), non-finite, or ≤ 0 are made transparent. About half of each preview is transparent because the raster grid contains empty corners around the imaged swath.
+`M_(A,B) = AOI ∩ V_A ∩ V_B`
 
-*Not done:* the product's `mask` and `inputDataExceptionMask` layers were **not applied** because their interpretation policy has not been approved. A future "common-valid" mask would keep only pixels valid in both dates after that policy is approved.
+The AOI, quality policy, and common-valid-pixel policy have not been approved. An earlier diagnostic reported 528,206,772 pixels in the three-scene common core-valid intersection across the full shared raster grid. That count is not AOI-restricted, does not apply an approved QA policy, and is not a scientific acceptance result.
 
-## 10. Why do backscatter changes not independently prove flooding?
+## 8. Pairwise comparisons
 
-Backscatter changes can come from soil or vegetation moisture, vegetation growth or loss, surface roughness (wind, tillage, harvest), differences in acquisition geometry or orbit quality, processing differences, and speckle noise — in addition to flooding. A change in radar brightness is a **hypothesis generator**. A flood or water-level claim would need independent evidence (e.g. in-situ or gauge records, optical imagery, validated classification).
+| Pair | Interval | Fidelity | Status |
+|---|---:|---|---|
+| June 16 → June 28 | 12 days | Forecast → Near Real-Time | PENDING |
+| June 28 → October 14 | 108 days | Near Real-Time → Near Real-Time | PENDING |
+| June 16 → October 14 | 120 days | Forecast → Near Real-Time | PENDING |
 
-## Display products (how the previews were made)
+Identical grids, matching track/frame identifiers, and footprint-record consistency are not sufficient by themselves to approve a pair. AOI coverage, QA, acquisition fidelity, valid pixels, and the scientific question must be evaluated separately.
 
-Source: Frequency A HHHH GeoTIFF of each granule → `10·log10` → reprojection and block-average downsampling to EPSG:3857, 1800 × 1773 px → grayscale stretch between **−25.94 dB and −4.44 dB** (2nd–98th percentile of all finite positive cells of the three downsampled previews, shared by all scenes) → PNG with transparency. Previews are **display products and not substitutes for the original measurements.**
+## 9. Difference calculation — not performed
 
-*Confirmed (reported by José, 2026-11-15):* the averaging was done on **linear power before** the dB conversion. The actual order was: read the Stage 2 HHHH GeoTIFF (linear gamma-zero) → reproject and average-resample the linear values → convert positive values with `10·log10` → apply the shared stretch → export transparent PNGs. A check of the three Stage 2 rasters found 0 zero, 0 negative and 0 infinite source values (remaining values are positive finite or NaN), so averaging is not biased by non-positive cells (`stage2_nonpositive_report.json`, held by José).
+No quantitative difference has been calculated or published. If a pair is eventually approved, a candidate dB difference is:
+
+`Δ_dB = 10·log10(P_later) − 10·log10(P_earlier)`
+
+It must be calculated from full-resolution Stage 2 power rasters on an approved pair-specific common-valid mask, not from the downsampled PNG previews. D-01 through D-04 approval and a successful preflight are prerequisites.
+
+## 10. Interpretation limits
+
+A difference in radar backscatter does not, by itself, prove flooding, inundation, water-level change, deforestation, or another environmental event. Soil and vegetation moisture, surface roughness, vegetation structure, acquisition geometry, orbit/pointing fidelity, processing differences, and speckle can also change the measurement. Environmental attribution requires independent evidence and a validated method.
