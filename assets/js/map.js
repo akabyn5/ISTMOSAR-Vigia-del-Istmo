@@ -1,11 +1,8 @@
 /*
- * ISTMOSAR — Leaflet radar explorer (Phase C)
- * - Loads assets/data/scenes.json and assets/data/study_area.json.
- * - app.js owns the scene selector and the metadata panel. It publishes the selected scene with
- *   the "istmosar:scenechange" event (and window.istmosarCurrentScene); this file shows the
- *   matching NISAR HHHH preview, so image and metadata always describe the same scene.
- * - Frames the whole raster preview extent with map.fitBounds() using the bounds in scenes.json.
- * - Radar layer opacity (#radar-opacity) and visibility (#radar-visible) are independent controls.
+ * ISTMOSAR — Leaflet geographic explorer (MH-05)
+ * - Loads assets/data/scenes.json and assets/data/study_area.json
+ * - Shows the NISAR HHHH preview of the scene chosen in #scene-select
+ * - Does NOT edit index.html or app.js: it listens to the existing selector.
  * - Draws NO watershed polygon. The dashed rectangle is a provisional raster viewing extent.
  */
 (function () {
@@ -14,8 +11,6 @@
   var SCENES_URL = "assets/data/scenes.json";
   var STUDY_URL = "assets/data/study_area.json";
   var FALLBACK_VIEW = { center: [8.95, -79.55], zoom: 8 };
-  var OSM_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
-  var DEFAULT_OPACITY = 0.9;
 
   function fetchJson(url) {
     return fetch(url, { cache: "no-store" }).then(function (r) {
@@ -56,7 +51,7 @@
     mapElement.replaceChildren(); // remove the "Loading map…" placeholder
 
     var map = L.map(mapElement, { scrollWheelZoom: false, minZoom: 5 }).setView(FALLBACK_VIEW.center, FALLBACK_VIEW.zoom);
-    var osm = L.tileLayer(OSM_URL, {
+    var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | ' +
         'NISAR L2 GCOV data: NASA/ISRO, distributed by ASF DAAC (exploratory display by ISTMOSAR)'
@@ -86,80 +81,26 @@
     });
 
     function setup(d) {
+      var scenes = d.scenes.scenes;
       var display = d.scenes.display || {};
       var study = d.studyArea || {};
 
-      // ---- radar layer state (opacity and visibility are independent) ----
-      var radarGroup = L.layerGroup().addTo(map);
-      var radarOpacity = DEFAULT_OPACITY;
-      var currentOverlay = null;
-      var currentSceneId = null;
-
-      // ---- framing: show the whole raster extent from the scene metadata ----
-      var framedBounds = null;   // JSON string of the bounds already framed
-      var userMoved = false;     // true once the person pans or zooms by hand
-      var framing = false;       // true while the code itself moves the map
-
-      function frame(bounds) {
-        if (!bounds) return;
-        framing = true;
-        map.invalidateSize();
-        map.fitBounds(bounds, { padding: [10, 10], animate: false });
-        framing = false;
-        framedBounds = JSON.stringify(bounds);
+      if (study.mapView && study.mapView.center) {
+        map.setView(study.mapView.center, study.mapView.zoom || FALLBACK_VIEW.zoom);
       }
-      map.on("dragstart", function () { if (!framing) userMoved = true; });
-      map.on("zoomstart", function () { if (!framing) userMoved = true; });
-
-      function currentBounds() {
-        var sc = window.istmosarCurrentScene;
-        if (sc && sc.preview && Array.isArray(sc.preview.leafletBounds)) return sc.preview.leafletBounds;
-        if (study.provisionalViewingExtent && study.provisionalViewingExtent.leafletBounds) {
-          return study.provisionalViewingExtent.leafletBounds;
-        }
-        return null;
-      }
-      function refit() {
-        if (userMoved) return;
-        var b = currentBounds();
-        if (b) frame(b);
-      }
-      if (window.ResizeObserver) {
-        new ResizeObserver(function () { map.invalidateSize(); refit(); }).observe(mapElement);
-      }
-      window.addEventListener("load", refit);
-
-      // "Zoom to preview extent" button (also usable after panning on a phone)
-      var fitControl = L.control({ position: "topleft" });
-      fitControl.onAdd = function () {
-        var div = L.DomUtil.create("div", "leaflet-bar leaflet-control");
-        var a = L.DomUtil.create("a", "map-fit-button", div);
-        a.href = "#";
-        a.title = "Zoom to the preview extent";
-        a.setAttribute("role", "button");
-        a.setAttribute("aria-label", "Zoom to the preview extent");
-        a.textContent = "\u2922";
-        L.DomEvent.disableClickPropagation(div);
-        L.DomEvent.on(a, "click", function (e) {
-          L.DomEvent.preventDefault(e);
-          userMoved = false;
-          var b = currentBounds();
-          if (b) frame(b);
-        });
-        return div;
-      };
-      fitControl.addTo(map);
 
       // Provisional raster viewing extent — NOT an AOI / watershed.
       var extentLayer = L.layerGroup();
       var ext = study.provisionalViewingExtent;
       if (ext && ext.leafletBounds) {
-        extentLayer.addLayer(L.rectangle(ext.leafletBounds, {
+        var rect = L.rectangle(ext.leafletBounds, {
           color: "#e9bd72", weight: 1.5, dashArray: "6 6", fill: false, interactive: false
-        }));
+        });
+        extentLayer.addLayer(rect);
         extentLayer.addTo(map);
       }
-      frame(ext && ext.leafletBounds ? ext.leafletBounds : null);
+
+      var radarGroup = L.layerGroup().addTo(map);
 
       var overlays = {};
       overlays["NISAR HHHH preview (selected scene)"] = radarGroup;
@@ -189,7 +130,7 @@
         var sum = L.DomUtil.create("summary", "", more);
         sum.textContent = "Notes";
         var note = L.DomUtil.create("div", "legend-note", more);
-        note.textContent = "Shared 2\u201398th percentile stretch \u00B7 transparent = NoData or non-positive after resampling \u00B7 QA masks not applied \u00B7 exploratory display product";
+        note.textContent = "Shared 2\u201398% stretch \u00B7 transparent = NoData \u00B7 QA masks not applied \u00B7 exploratory";
 
         function setCollapsed(c) {
           div.classList.toggle("collapsed", c);
@@ -205,51 +146,74 @@
       };
       legend.addTo(map);
 
-      // ---- opacity and visibility controls in the Radar Explorer panel ----
-      var opacityInput = document.getElementById("radar-opacity");
-      var opacityOut = document.getElementById("radar-opacity-value");
-      var visibleInput = document.getElementById("radar-visible");
-
-      function showOpacityValue() {
-        if (opacityOut) opacityOut.textContent = Math.round(radarOpacity * 100) + "%";
-        if (opacityInput) opacityInput.setAttribute("aria-valuetext", Math.round(radarOpacity * 100) + " percent");
+      // ---- static text that index.html says "BASEMAP ONLY" ----
+      var tag = document.querySelector(".map-tag");
+      if (tag) tag.textContent = "EXPLORATORY PREVIEW";
+      var foot = document.querySelectorAll(".map-foot span");
+      if (foot.length >= 2) {
+        foot[0].textContent = "Study-area polygon: not approved \u00B7 dashed outline = provisional raster extent";
+        foot[1].textContent = "Base map \u00A9 OpenStreetMap contributors \u00B7 NISAR data: NASA/ISRO via ASF DAAC";
       }
-      if (opacityInput) {
-        radarOpacity = Math.max(0.1, Math.min(1, Number(opacityInput.value) / 100 || DEFAULT_OPACITY));
-        opacityInput.addEventListener("input", function () {
-          radarOpacity = Math.max(0.1, Math.min(1, Number(opacityInput.value) / 100));
-          if (currentOverlay) currentOverlay.setOpacity(radarOpacity); // updates the real Leaflet overlay
-          showOpacityValue();
-        });
-      }
-      showOpacityValue();
-
-      if (visibleInput) {
-        visibleInput.checked = map.hasLayer(radarGroup);
-        visibleInput.addEventListener("change", function () {
-          if (visibleInput.checked) { if (!map.hasLayer(radarGroup)) map.addLayer(radarGroup); }
-          else if (map.hasLayer(radarGroup)) map.removeLayer(radarGroup);
-        });
-        // keep the checkbox in step with the Leaflet layers control
-        map.on("overlayadd", function (e) { if (e.layer === radarGroup) visibleInput.checked = true; });
-        map.on("overlayremove", function (e) { if (e.layer === radarGroup) visibleInput.checked = false; });
-      }
-
-      // ---- map-side text that depends on the data ----
       mapElement.setAttribute("aria-label", "Interactive map of Panama with the selected NISAR HHHH backscatter preview");
 
       // ---- scene handling ----
-      function fidelityShort(scene) {
-        return scene.orbitFidelity + " orbit/pointing";
-      }
+      var currentSceneId = null;
+      var currentBounds = null; // footprint of the scene currently shown
 
-      function showScene(scene) {
+      // ---- "Fit to scene" control (below the zoom buttons) ----
+      var SVG_NS = "http://www.w3.org/2000/svg";
+      var FitControl = L.Control.extend({
+        options: { position: "topleft" },
+        onAdd: function () {
+          var bar = L.DomUtil.create("div", "leaflet-bar leaflet-control map-fit-control");
+          var link = L.DomUtil.create("a", "map-fit-button", bar);
+          link.href = "#";
+          link.setAttribute("role", "button");
+          link.title = "Fit to scene";
+          link.setAttribute("aria-label", "Fit map to the current NISAR scene");
+          var svg = document.createElementNS(SVG_NS, "svg");
+          svg.setAttribute("viewBox", "0 0 24 24");
+          svg.setAttribute("width", "16");
+          svg.setAttribute("height", "16");
+          svg.setAttribute("aria-hidden", "true");
+          var path = document.createElementNS(SVG_NS, "path");
+          path.setAttribute("d", "M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7");
+          path.setAttribute("fill", "none");
+          path.setAttribute("stroke", "currentColor");
+          path.setAttribute("stroke-width", "2");
+          path.setAttribute("stroke-linecap", "round");
+          path.setAttribute("stroke-linejoin", "round");
+          svg.appendChild(path);
+          link.appendChild(svg);
+          L.DomEvent.disableClickPropagation(bar);
+          L.DomEvent.on(link, "click", function (e) {
+            L.DomEvent.preventDefault(e);
+            map.invalidateSize();
+            var b = currentBounds || (ext && ext.leafletBounds) || null;
+            if (b) map.fitBounds(b);
+            else if (study.mapView && study.mapView.center) map.setView(study.mapView.center, study.mapView.zoom || FALLBACK_VIEW.zoom);
+            else map.setView(FALLBACK_VIEW.center, FALLBACK_VIEW.zoom);
+          });
+          return bar;
+        }
+      });
+      new FitControl().addTo(map);
+
+      function selectScene(sceneId) {
+        var scene = null;
+        for (var i = 0; i < scenes.length; i++) if (scenes[i].id === sceneId) scene = scenes[i];
+        currentSceneId = sceneId;
         radarGroup.clearLayers(); // never leave an old image next to new metadata
-        currentOverlay = null;
+        currentBounds = null;
         hideBanner();
-        if (!scene) return;
-        currentSceneId = scene.id;
-        legendScene.textContent = scene.label + " \u00B7 " + fidelityShort(scene);
+        if (!scene) {
+          legendScene.textContent = "No scene selected";
+          showBanner("Unknown scene: " + sceneId, "error");
+          return;
+        }
+        legendScene.textContent = scene.label + " \u00B7 " + scene.orbitFidelity;
+        if (!map.hasLayer(radarGroup)) map.addLayer(radarGroup);
+        document.dispatchEvent(new CustomEvent("istmosar:scenechange", { detail: { scene: scene } }));
 
         var pv = scene.preview;
         var okBounds = pv && Array.isArray(pv.leafletBounds) && pv.leafletBounds.length === 2;
@@ -257,10 +221,9 @@
           showBanner("No NISAR preview is available for " + scene.label + ".");
           return;
         }
-        if (JSON.stringify(pv.leafletBounds) !== framedBounds && !userMoved) frame(pv.leafletBounds);
-
+        currentBounds = pv.leafletBounds;
         var overlay = L.imageOverlay(pv.path, pv.leafletBounds, {
-          opacity: radarOpacity, interactive: false,
+          opacity: 0.9, interactive: false,
           alt: "NISAR Frequency A HHHH backscatter preview, " + scene.label
         });
         overlay.on("error", function () {
@@ -271,14 +234,28 @@
         overlay.on("load", function () {
           if (currentSceneId === scene.id) hideBanner();
         });
-        currentOverlay = overlay;
         radarGroup.addLayer(overlay);
       }
 
-      document.addEventListener("istmosar:scenechange", function (e) {
-        showScene(e.detail && e.detail.scene);
-      });
-      if (window.istmosarCurrentScene) showScene(window.istmosarCurrentScene);
+      var select = document.getElementById("scene-select");
+      if (!select) return;
+      select.addEventListener("change", function () { selectScene(select.value); });
+
+      var initialised = false;
+      function initialSelection() {
+        if (initialised || select.options.length === 0) return;
+        initialised = true;
+        selectScene(select.value || select.options[0].value);
+      }
+      initialSelection();
+      if (!initialised) {
+        // app.js fills the selector asynchronously
+        var observer = new MutationObserver(function () {
+          initialSelection();
+          if (initialised) observer.disconnect();
+        });
+        observer.observe(select, { childList: true });
+      }
     }
   }
 

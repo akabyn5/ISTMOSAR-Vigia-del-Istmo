@@ -1,19 +1,13 @@
 /*
- * ISTMOSAR — two-date VISUAL comparison (Phase C)
+ * ISTMOSAR — two-date VISUAL comparison (MH-06)
  * Overlays two exploratory HHHH previews (same extent, same dB stretch) and lets the user crossfade.
  * It does NOT compute or draw a difference map, change statistics, flood estimates or conclusions.
- * The panel is injected into #change.
- *
- * Date pairs are generated from the scene list (every chronological pair), not hard-coded.
- * Invalid choices are disabled in the selectors: the Before scene is always the earlier date.
- * scenes.json "pairs" only supplies status and caveats for a pair; it never limits the choices.
+ * The panel is injected into #change so index.html does not need to change.
  */
 (function () {
   "use strict";
 
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  var OSM_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
-  var WARNING = "Visual comparison only \u2014 not validated change detection.";
 
   window.istmosarComparison = Object.freeze({
     enabled: true,
@@ -46,17 +40,6 @@
     return JSON.stringify(a) === JSON.stringify(b);
   }
 
-  function utcWindow(scene) {
-    var a = scene.acquisition;
-    if (!a || !a.startUtc || !a.endUtc) return "\u2014";
-    return a.startUtc.slice(0, 19).replace("T", " ") + " \u2013 " + a.endUtc.slice(11, 19) + " UTC";
-  }
-
-  function fidelityText(scene) {
-    var token = scene.productDetails && scene.productDetails.orbitPointingFidelityToken;
-    return token ? scene.orbitFidelity + " (token " + token + ")" : scene.orbitFidelity;
-  }
-
   function loadData() {
     if (window.istmosarData && window.istmosarData.promise) {
       return window.istmosarData.promise.then(function (d) { return { scenes: d.scenes, study: d.studyArea }; });
@@ -79,22 +62,32 @@
     var labelAfter = el("span", { class: "compare-label", id: "compare-label-after" });
     var pill = el("span", { class: "pill pill-pending", id: "compare-pill", text: "Scientific pair status: PENDING" });
     var interval = el("span", { class: "compare-interval", id: "compare-interval" });
-    var metaBefore = el("dl", { class: "compare-meta-list", id: "compare-meta-before" });
-    var metaAfter = el("dl", { class: "compare-meta-list", id: "compare-meta-after" });
     var notice = el("div", { class: "notice notice-amber", id: "compare-notice", role: "status" }, [
-      el("strong", { text: WARNING }),
+      el("strong", { text: "Visual comparison only" }),
       el("p", { id: "compare-notice-text" })
     ]);
 
     function field(labelText, control, helpText) {
-      var wrapper = el("label", { class: "compare-field" }, [el("span", { class: "field-label", text: labelText }), control]);
+      var wrapper = el("label", { class: "compare-field" }, [
+        el("span", { class: "field-label", text: labelText }),
+        control
+      ]);
+      
       if (helpText) {
         var helpId = (control.id || "compare-field") + "-help";
-        wrapper.appendChild(el("small", { class: "compare-help", id: helpId, text: helpText }));
+        wrapper.appendChild(
+          el("small", {
+            class: "compare-help",
+            id: helpId,
+            text: helpText
+          })
+        );
         control.setAttribute("aria-describedby", helpId);
       }
+      
       return wrapper;
     }
+
     function check(labelText, input) {
       return el("label", { class: "compare-check" }, [input, el("span", { text: labelText })]);
     }
@@ -115,10 +108,6 @@
         el("div", { class: "compare-labels" }, [labelBefore, labelAfter])
       ]),
       interval,
-      el("div", { class: "compare-meta" }, [
-        el("div", { class: "compare-meta-col" }, [el("span", { class: "card-index", text: "BEFORE" }), metaBefore]),
-        el("div", { class: "compare-meta-col" }, [el("span", { class: "card-index", text: "AFTER" }), metaAfter])
-      ]),
       notice
     ]);
 
@@ -128,27 +117,50 @@
 
     return { earlierSel: earlierSel, laterSel: laterSel, showEarlier: showEarlier, showLater: showLater,
              fade: fade, opacity: opacity, mapDiv: mapDiv, labelBefore: labelBefore, labelAfter: labelAfter,
-             pill: pill, interval: interval, metaBefore: metaBefore, metaAfter: metaAfter,
-             noticeText: panel.querySelector("#compare-notice-text") };
+             pill: pill, interval: interval, noticeText: panel.querySelector("#compare-notice-text") };
   }
 
-  function fillMeta(dl, scene) {
-    dl.replaceChildren();
-    if (!scene) return;
-    var cmr = scene.cmr || {};
-    var pending = typeof cmr.ummG !== "string" || cmr.ummG.toUpperCase().indexOf("PENDING") === 0;
-    var rows = [
-      ["Date", fmtDate(scene.date)],
-      ["Acquisition", utcWindow(scene)],
-      ["Cycle", scene.cycle],
-      ["Orbit & pointing fidelity", fidelityText(scene)],
-      ["Granule ID", scene.granuleId || scene.filename],
-      [pending ? "CMR concept ID (unverified)" : "CMR concept ID", scene.cmrGranuleId]
-    ];
-    rows.forEach(function (r) {
-      dl.appendChild(el("dt", { text: r[0] }));
-      dl.appendChild(el("dd", { text: r[1] }));
+  // "Fit to scene" control: same look and behaviour as the Radar Explorer button.
+  // getBounds() returns the Leaflet bounds to fit (or null); fallback() runs when there are none.
+  function addFitControl(map, getBounds, fallback) {
+    var SVG_NS = "http://www.w3.org/2000/svg";
+    var FitControl = L.Control.extend({
+      options: { position: "topleft" },
+      onAdd: function () {
+        var bar = L.DomUtil.create("div", "leaflet-bar leaflet-control map-fit-control");
+        var link = L.DomUtil.create("a", "map-fit-button", bar);
+        link.href = "#";
+        link.setAttribute("role", "button");
+        link.title = "Fit to scene";
+        link.setAttribute("aria-label", "Fit map to the current NISAR scene");
+        var svg = document.createElementNS(SVG_NS, "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("width", "16");
+        svg.setAttribute("height", "16");
+        svg.setAttribute("aria-hidden", "true");
+        var path = document.createElementNS(SVG_NS, "path");
+        // diagonal double-headed arrow (bottom-left <-> top-right)
+        path.setAttribute("d", "M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7");
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "currentColor");
+        path.setAttribute("stroke-width", "2");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("stroke-linejoin", "round");
+        svg.appendChild(path);
+        link.appendChild(svg);
+
+        L.DomEvent.disableClickPropagation(bar);
+        L.DomEvent.on(link, "click", function (e) {
+          L.DomEvent.preventDefault(e);
+          map.invalidateSize();
+          var b = getBounds();
+          if (b) map.fitBounds(b);
+          else if (fallback) fallback();
+        });
+        return bar;
+      }
     });
+    new FitControl().addTo(map);
   }
 
   function init() {
@@ -163,60 +175,23 @@
     }
 
     loadData().then(function (data) {
+      var scenes = data.scenes.scenes;
       var pairs = data.scenes.pairs || [];
-      var all = data.scenes.scenes.slice().sort(function (a, b) { return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); });
-
-      // Valid scenes: a preview file and bounds are recorded, and the bounds match the first valid scene.
-      var scenes = all.filter(function (s) {
-        return s.preview && s.preview.path && Array.isArray(s.preview.leafletBounds) && s.preview.leafletBounds.length === 2;
-      });
-      var commonBounds = scenes.length ? scenes[0].preview.leafletBounds : null;
-      scenes = scenes.filter(function (s) { return sameBounds(s.preview.leafletBounds, commonBounds); });
-
       var byId = {};
       scenes.forEach(function (s) { byId[s.id] = s; });
-
-      if (scenes.length < 2) {
-        ui.mapDiv.className = "map-loading";
-        ui.mapDiv.textContent = "At least two scenes with previews on the same extent are needed for a visual comparison.";
-        return;
-      }
-      var lastDate = scenes[scenes.length - 1].date;
 
       scenes.forEach(function (s) {
         [ui.earlierSel, ui.laterSel].forEach(function (sel) {
           sel.appendChild(el("option", { value: s.id, text: fmtDate(s.date) + " \u00B7 Cycle " + s.cycle + " \u00B7 " + s.orbitFidelity }));
         });
       });
-
-      // Disable invalid choices: Before must have a later scene; After must be later than Before.
-      function refreshOptionStates() {
-        var a = byId[ui.earlierSel.value];
-        Array.prototype.forEach.call(ui.earlierSel.options, function (o) {
-          o.disabled = byId[o.value].date >= lastDate;
-        });
-        Array.prototype.forEach.call(ui.laterSel.options, function (o) {
-          o.disabled = !a || byId[o.value].date <= a.date;
-        });
-      }
-      function firstLaterThan(a) {
-        for (var i = 0; i < scenes.length; i++) if (scenes[i].date > a.date) return scenes[i];
-        return null;
-      }
-
-      // First candidate pair: the first entry of "pairs" if valid, otherwise the first chronological pair.
-      var first = null;
-      pairs.forEach(function (p) {
-        var e = byId[p.earlier], l = byId[p.later];
-        if (!first && e && l && e.date < l.date) first = { earlier: e.id, later: l.id };
-      });
-      if (!first) first = { earlier: scenes[0].id, later: firstLaterThan(scenes[0]).id };
+      // First-priority candidate pair: June 16 -> June 28
+      var first = pairs.length ? pairs[0] : { earlier: scenes[0].id, later: scenes[Math.min(1, scenes.length - 1)].id };
       ui.earlierSel.value = first.earlier;
-      refreshOptionStates();
       ui.laterSel.value = first.later;
 
       var map = L.map(ui.mapDiv, { scrollWheelZoom: false, minZoom: 5 });
-      L.tileLayer(OSM_URL, {
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | NISAR L2 GCOV data: NASA/ISRO via ASF DAAC (exploratory display)'
       }).addTo(map);
@@ -226,19 +201,18 @@
 
       var layerBefore = null, layerAfter = null;
       var token = 0;
-      var userMoved = false, framing = false;
 
-      function frame() {
-        framing = true;
-        map.invalidateSize();
-        map.fitBounds(commonBounds, { padding: [10, 10], animate: false });
-        framing = false;
-      }
-      map.on("dragstart", function () { if (!framing) userMoved = true; });
-      map.on("zoomstart", function () { if (!framing) userMoved = true; });
-      if (window.ResizeObserver) {
-        new ResizeObserver(function () { map.invalidateSize(); if (!userMoved) frame(); }).observe(ui.mapDiv);
-      }
+      // Bounds of the comparison scene currently shown (null when no overlay is displayed).
+      var currentBounds = null;
+      var studyExtent = study.provisionalViewingExtent && study.provisionalViewingExtent.leafletBounds;
+      addFitControl(
+        map,
+        function () { return currentBounds || studyExtent || null; },
+        function () {
+          var v = study.mapView && study.mapView.center ? study.mapView : { center: [8.95, -79.55], zoom: 8 };
+          map.setView(v.center, v.zoom || 8);
+        }
+      );
 
       function setNotice(parts) { ui.noticeText.textContent = parts.join(" "); }
 
@@ -257,19 +231,17 @@
       function update() {
         var myToken = ++token;
         clearLayers();
-        refreshOptionStates();
+        currentBounds = null;
         var a = byId[ui.earlierSel.value], b = byId[ui.laterSel.value];
-        ui.labelBefore.textContent = a ? "BEFORE: " + fmtDate(a.date) + " (" + a.orbitFidelity + " orbit/pointing)" : "";
-        ui.labelAfter.textContent = b ? "AFTER: " + fmtDate(b.date) + " (" + b.orbitFidelity + " orbit/pointing)" : "";
-        fillMeta(ui.metaBefore, a);
-        fillMeta(ui.metaAfter, b);
+        ui.labelBefore.textContent = a ? "BEFORE: " + fmtDate(a.date) + " (" + a.orbitFidelity + ")" : "";
+        ui.labelAfter.textContent = b ? "AFTER: " + fmtDate(b.date) + " (" + b.orbitFidelity + ")" : "";
         ui.interval.textContent = "";
         ui.pill.textContent = "Scientific pair status: PENDING";
 
         var base = "Two exploratory HHHH previews on the same display scale are overlaid. This is NOT a validated change-detection result: no difference map, change statistics, flooding estimate or environmental conclusion is shown.";
         if (!a || !b) { setNotice(["Select two acquisitions."]); return; }
         if (a.date >= b.date) {
-          setNotice(["The Before scene must be earlier than the After scene. Choose two different dates in chronological order."]);
+          setNotice(["The earlier acquisition must be before the later one. Choose two different dates in chronological order."]);
           return;
         }
         ui.interval.textContent = "Interval: " + daysBetween(a.date, b.date) + " days";
@@ -281,10 +253,17 @@
           ui.pill.textContent = "Scientific pair status: " + pair.status;
           (pair.caveats || []).forEach(function (c) { extra.push(c); });
         } else {
-          extra.push("No pair record exists for this combination; its scientific status is PENDING.");
+          extra.push("This pair is not in the candidate list; status PENDING.");
         }
         if (a.orbitFidelity !== b.orbitFidelity) {
-          extra.push("Orbit and pointing fidelity differs between the two acquisitions.");
+          extra.push("Orbit fidelity differs between the two acquisitions.");
+        }
+
+        var pa = a.preview, pb = b.preview;
+        if (!pa || !pa.path || !pb || !pb.path) { setNotice(["A preview is missing for one of the selected scenes.", base]); return; }
+        if (!sameBounds(pa.leafletBounds, pb.leafletBounds)) {
+          setNotice(["The two previews do not share the same geographic extent, so they are not overlaid.", base]);
+          return;
         }
 
         var failed = [];
@@ -297,29 +276,61 @@
           });
           return l;
         }
-        layerBefore = mk(a.preview, a).addTo(map);
-        layerAfter = mk(b.preview, b).addTo(map);
+        layerBefore = mk(pa, a).addTo(map);
+        layerAfter = mk(pb, b).addTo(map);
         applyOpacity();
-        if (!userMoved) frame();
+        currentBounds = pa.leafletBounds;
+        map.fitBounds(currentBounds);
         setNotice([base].concat(extra));
       }
 
-      ui.earlierSel.addEventListener("change", function () {
+      // Chronological guard: disable impossible options and keep the pairing valid.
+      function refreshOptionStates() {
+        var earlier = byId[ui.earlierSel.value];
+        var latestDate = scenes.reduce(function (m, s) { return s.date > m ? s.date : m; }, scenes[0].date);
+        Array.prototype.forEach.call(ui.earlierSel.options, function (o) {
+          var sc = byId[o.value];
+          // The latest acquisition has no later scene, so it cannot be "Before".
+          o.disabled = sc.date >= latestDate;
+        });
+        Array.prototype.forEach.call(ui.laterSel.options, function (o) {
+          var sc = byId[o.value];
+          // Only scenes strictly later than the selected Before date.
+          o.disabled = !!earlier && sc.date <= earlier.date;
+        });
+      }
+
+      function ensureValidPairing() {
         var a = byId[ui.earlierSel.value];
         var b = byId[ui.laterSel.value];
-        if (a && (!b || b.date <= a.date)) {
-          var nxt = firstLaterThan(a);
-          if (nxt) ui.laterSel.value = nxt.id;
+        if (a && b && b.date > a.date) { refreshOptionStates(); return; }
+        // Pick the nearest later scene after the selected Before date.
+        var next = null;
+        scenes.forEach(function (s) {
+          if (a && s.date > a.date && (!next || s.date < next.date)) next = s;
+        });
+        if (next) {
+          ui.laterSel.value = next.id;
+        } else if (a) {
+          // Before has no later scene (should be unreachable: option is disabled). Fall back to the
+          // earliest scene as Before and the nearest later scene as After.
+          var sorted = scenes.slice().sort(function (x, y) { return x.date < y.date ? -1 : 1; });
+          ui.earlierSel.value = sorted[0].id;
+          ui.laterSel.value = sorted[1] ? sorted[1].id : sorted[0].id;
         }
-        update();
-      });
-      ui.laterSel.addEventListener("change", update);
+        refreshOptionStates();
+      }
+
+      ensureValidPairing();
+
+      ui.earlierSel.addEventListener("change", function () { ensureValidPairing(); update(); });
+      ui.laterSel.addEventListener("change", function () { ensureValidPairing(); update(); });
       [ui.fade, ui.opacity].forEach(function (i) { i.addEventListener("input", applyOpacity); });
       [ui.showEarlier, ui.showLater].forEach(function (i) { i.addEventListener("change", applyOpacity); });
 
       update();
-      setTimeout(function () { map.invalidateSize(); if (!userMoved) frame(); }, 200);
-      window.addEventListener("load", function () { map.invalidateSize(); if (!userMoved) frame(); });
+      setTimeout(function () { map.invalidateSize(); }, 200);
+      window.addEventListener("load", function () { map.invalidateSize(); });
     }).catch(function (err) {
       console.error("ISTMOSAR comparison error:", err);
       ui.mapDiv.className = "map-loading";
